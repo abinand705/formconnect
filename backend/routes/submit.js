@@ -31,7 +31,7 @@ router.post("/", submitLimiter, async (req, res) => {
     }
 
     // 3. Validate required fields against project's schema
-    const fields = JSON.parse(project.fields); // Stored as String in SQLite
+    const fields = project.fields;
     const missing = fields
       .filter(f => f.required && !data[f.name])
       .map(f => f.name);
@@ -46,7 +46,7 @@ router.post("/", submitLimiter, async (req, res) => {
     const submission = await prisma.submission.create({
       data: {
         projectId: project.id,
-        data: JSON.stringify(data), // Stored as String in SQLite
+        data,
       },
     });
 

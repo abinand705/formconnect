@@ -25,7 +25,7 @@ router.post("/", auth, async (req, res) => {
       data: {
         name,
         apiKey,
-        fields: JSON.stringify(defaultFields),
+        fields: defaultFields,
         userId: req.user.userId
       }
     });
@@ -63,7 +63,7 @@ router.patch("/:id", auth, async (req, res) => {
 
     const data = {};
     if (name) data.name = name;
-    if (fields) data.fields = JSON.stringify(fields);
+    if (fields) data.fields = fields;
 
     const updatedProject = await prisma.project.update({
       where: { id: req.params.id },

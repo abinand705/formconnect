@@ -6,7 +6,8 @@ generator client {
 }
 
 datasource db {
-  provider = "sqlite"
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
 }
 
 model User {
@@ -21,7 +22,7 @@ model Project {
   id          String       @id @default(uuid())
   name        String
   apiKey      String       @unique
-  fields      String       // SQLite does not support Json, using String to store serialized JSON
+  fields      Json
   userId      String
   user        User         @relation(fields: [userId], references: [id])
   submissions Submission[]
@@ -32,7 +33,7 @@ model Submission {
   id        String   @id @default(uuid())
   projectId String
   project   Project  @relation(fields: [projectId], references: [id])
-  data      String   // SQLite does not support Json, using String to store serialized JSON
+  data      Json
   read      Boolean  @default(false)
   createdAt DateTime @default(now())
 }
