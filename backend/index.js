@@ -17,6 +17,7 @@ app.use("/api/auth", authRoutes);
 app.use("/api/projects", projectRoutes);
 app.use("/api/submit", submitRoutes);
 app.use("/api/submissions", submissionRoutes);
+app.use(cors({ origin: "https://abinandes.vercel.app" }));
 
 const PORT = process.env.PORT || 5000;
 app.listen(PORT, () => {
