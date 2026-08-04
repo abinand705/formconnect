@@ -1,16 +1,5 @@
-const nodemailer = require("nodemailer");
-
-// Create a transporter using Gmail service
-const transporter = nodemailer.createTransport({
-  host: "smtp.gmail.com",
-  port: 587,
-  secure: false,
-  auth: {
-    user: process.env.EMAIL_USER,
-    pass: process.env.EMAIL_PASS,
-  },
-  family: 4,
-});
+const { Resend } = require('resend');
+const resend = new Resend(process.env.RESEND_API_KEY);
 
 /**
  * Sends an email
@@ -20,15 +9,13 @@ const transporter = nodemailer.createTransport({
  */
 const sendMail = async (to, subject, text) => {
   try {
-    const mailOptions = {
-      from: process.env.EMAIL_USER,
+    const info = await resend.emails.send({
+      from: 'FormConnect <onboarding@resend.dev>',
       to,
       subject,
       text,
-    };
-
-    const info = await transporter.sendMail(mailOptions);
-    console.log("Email sent: " + info.response);
+    });
+    console.log("Email sent:", info);
     return info;
   } catch (error) {
     console.error("Error sending email:", error);
