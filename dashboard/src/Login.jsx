@@ -24,7 +24,8 @@ function Login({ setToken }) {
         throw new Error(data.error || 'Login failed')
       }
 
-      setToken(data.token)
+      localStorage.setItem('email', email)
+      setToken(data.token, email)
     } catch (err) {
       setError(err.message)
     } finally {

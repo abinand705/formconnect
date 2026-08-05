@@ -3,21 +3,35 @@ import Login from './Login'
 import Register from './Register'
 import ProjectList from './ProjectList'
 import Sidebar from './components/sidebar'
+import Dashboard from './Dashboard'
+import ApiKeys from './ApiKeys'
+import Support from './Support'
 import { Wrench } from 'lucide-react'
 
 function App() {
   const [token, setToken] = useState(() => localStorage.getItem('token'))
+  const [userEmail, setUserEmail] = useState(() => localStorage.getItem('email'))
   const [isRegistering, setIsRegistering] = useState(false)
   const [activeTab, setActiveTab] = useState('dashboard')
 
-  const handleLogin = (newToken) => {
+  const handleLogin = (newToken, email) => {
     localStorage.setItem('token', newToken)
+    if (email) {
+      localStorage.setItem('email', email)
+      setUserEmail(email)
+    } else {
+      // Fallback if email is missing
+      const storedEmail = localStorage.getItem('email')
+      setUserEmail(storedEmail)
+    }
     setToken(newToken)
   }
 
   const handleLogout = () => {
     localStorage.removeItem('token')
+    localStorage.removeItem('email')
     setToken(null)
+    setUserEmail(null)
   }
 
   if (!token) {
@@ -50,7 +64,7 @@ function App() {
 
   return (
     <div className="layout-container">
-      <Sidebar activeTab={activeTab} setActiveTab={setActiveTab} />
+      <Sidebar activeTab={activeTab} setActiveTab={setActiveTab} email={userEmail} />
       
       <main className="main-content">
         <header style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '2rem' }}>
@@ -63,7 +77,13 @@ function App() {
         </header>
 
         {activeTab === 'dashboard' ? (
+          <Dashboard token={token} />
+        ) : activeTab === 'projects' ? (
           <ProjectList token={token} />
+        ) : activeTab === 'apikeys' ? (
+          <ApiKeys token={token} />
+        ) : activeTab === 'support' ? (
+          <Support />
         ) : (
           <div className="maintenance-view">
             <Wrench size={64} color="var(--accent-color)" />

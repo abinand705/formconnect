@@ -25,6 +25,7 @@ function Register({ onRegisterSuccess }) {
         throw new Error(data.error || 'Registration failed')
       }
 
+      localStorage.setItem('email', email)
       setSuccess(true)
       setTimeout(() => {
         onRegisterSuccess()

@@ -10,7 +10,7 @@ import {
   ChevronDown
 } from 'lucide-react';
 
-function Sidebar({ activeTab, setActiveTab }) {
+function Sidebar({ activeTab, setActiveTab, email }) {
   const menuItems = [
     { id: 'dashboard', label: 'Dashboard', icon: LayoutDashboard },
     { id: 'projects', label: 'Projects', icon: Folder },
@@ -19,6 +19,10 @@ function Sidebar({ activeTab, setActiveTab }) {
     { id: 'settings', label: 'Settings', icon: Settings },
     { id: 'support', label: 'Support', icon: Headphones },
   ];
+
+  const displayEmail = email || 'user@example.com';
+  const displayName = displayEmail.split('@')[0];
+  const avatarLetter = displayName.charAt(0).toUpperCase();
 
   return (
     <aside className="sidebar">
@@ -46,10 +50,10 @@ function Sidebar({ activeTab, setActiveTab }) {
 
       <div className="sidebar-footer">
         <div className="user-profile">
-          <div className="avatar">A</div>
+          <div className="avatar">{avatarLetter}</div>
           <div className="user-info">
-            <span className="user-name">Abinand E S</span>
-            <span className="user-email">abinand705@gmail.com</span>
+            <span className="user-name">{displayName}</span>
+            <span className="user-email">{displayEmail}</span>
           </div>
           <ChevronDown size={16} className="dropdown-icon" />
         </div>

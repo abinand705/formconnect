@@ -55,10 +55,15 @@ button {
   background-color: var(--accent-color);
   color: white;
   cursor: pointer;
-  transition: border-color 0.25s, background-color 0.25s;
+  transition: all 0.2s;
 }
-button:hover {
-  background-color: var(--accent-color-hover);
+button:hover:not(:disabled) {
+  filter: brightness(1.2);
+  transform: translateY(-1px);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+}
+button:active:not(:disabled) {
+  transform: translateY(0);
 }
 button:focus,
 button:focus-visible {
@@ -76,6 +81,12 @@ input {
   width: 100%;
   box-sizing: border-box;
   margin-bottom: 1rem;
+  transition: border-color 0.2s, box-shadow 0.2s;
+}
+input:focus {
+  outline: none;
+  border-color: var(--accent-color);
+  box-shadow: 0 0 0 2px rgba(100, 108, 255, 0.2);
 }
 
 .card {
@@ -84,6 +95,13 @@ input {
   border-radius: 8px;
   border: 1px solid var(--border-color);
   margin-bottom: 1rem;
+  transition: transform 0.2s, box-shadow 0.2s, border-color 0.2s;
+}
+
+.card:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 6px 16px rgba(0, 0, 0, 0.2);
+  border-color: #444;
 }
 
 .list-item {
@@ -93,11 +111,13 @@ input {
   border: 1px solid var(--border-color);
   margin-bottom: 0.5rem;
   cursor: pointer;
-  transition: border-color 0.25s;
+  transition: transform 0.2s, box-shadow 0.2s, border-color 0.2s;
 }
 
 .list-item:hover {
   border-color: var(--accent-color);
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
 }
 
 .submission-item {
