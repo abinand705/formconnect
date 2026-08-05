@@ -8,7 +8,7 @@ function SubmissionsView({ token, project, onBack }) {
   useEffect(() => {
     const fetchSubmissions = async () => {
       try {
-        const response = await fetch(`http://localhost:5000/api/projects/${project.id}/submissions`, {
+        const response = await fetch(`${import.meta.env.VITE_API_URL}/api/projects/${project.id}/submissions`, {
           headers: {
             'Authorization': `Bearer ${token}`
           }
@@ -37,7 +37,7 @@ function SubmissionsView({ token, project, onBack }) {
         sub.id === submissionId ? { ...sub, read: true } : sub
       ))
 
-      const response = await fetch(`http://localhost:5000/api/submissions/${submissionId}`, {
+      const response = await fetch(`${import.meta.env.VITE_API_URL}/api/submissions/${submissionId}`, {
         method: 'PATCH',
         headers: {
           'Content-Type': 'application/json',

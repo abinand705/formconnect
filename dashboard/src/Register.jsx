@@ -1,10 +1,11 @@
 import { useState } from 'react'
 
-function Login({ setToken }) {
+function Register({ onRegisterSuccess }) {
   const [email, setEmail] = useState('')
   const [password, setPassword] = useState('')
   const [error, setError] = useState(null)
   const [loading, setLoading] = useState(false)
+  const [success, setSuccess] = useState(false)
 
   const handleSubmit = async (e) => {
     e.preventDefault()
@@ -12,7 +13,7 @@ function Login({ setToken }) {
     setLoading(true)
 
     try {
-      const response = await fetch(`${import.meta.env.VITE_API_URL}/api/auth/login`, {
+      const response = await fetch(`${import.meta.env.VITE_API_URL}/api/auth/register`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ email, password }),
@@ -21,10 +22,13 @@ function Login({ setToken }) {
       const data = await response.json()
 
       if (!response.ok) {
-        throw new Error(data.error || 'Login failed')
+        throw new Error(data.error || 'Registration failed')
       }
 
-      setToken(data.token)
+      setSuccess(true)
+      setTimeout(() => {
+        onRegisterSuccess()
+      }, 2000)
     } catch (err) {
       setError(err.message)
     } finally {
@@ -32,9 +36,18 @@ function Login({ setToken }) {
     }
   }
 
+  if (success) {
+    return (
+      <div className="card" style={{ maxWidth: '400px', margin: '4rem auto', textAlign: 'center' }}>
+        <h2>Account created!</h2>
+        <p>Please log in.</p>
+      </div>
+    )
+  }
+
   return (
     <div className="card" style={{ maxWidth: '400px', margin: '4rem auto' }}>
-      <h2>Login to FormConnect</h2>
+      <h2>Register for FormConnect</h2>
       {error && <div className="error-message">{error}</div>}
       <form onSubmit={handleSubmit}>
         <div className="form-group">
@@ -58,11 +71,11 @@ function Login({ setToken }) {
           />
         </div>
         <button type="submit" disabled={loading} style={{ width: '100%' }}>
-          {loading ? 'Logging in...' : 'Login'}
+          {loading ? 'Creating account...' : 'Register'}
         </button>
       </form>
     </div>
   )
 }
 
-export default Login
+export default Register
