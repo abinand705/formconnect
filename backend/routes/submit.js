@@ -53,8 +53,19 @@ router.post("/", submitLimiter, async (req, res) => {
     // 5. Send Email Notification
     try {
       const emailSubject = `New submission on ${project.name}`;
+      
+      let emailData = data;
+      if (project.emailFields && Array.isArray(project.emailFields)) {
+        emailData = {};
+        for (const field of project.emailFields) {
+          if (data[field] !== undefined) {
+            emailData[field] = data[field];
+          }
+        }
+      }
+
       const emailBody = `You have a new submission for ${project.name}:\n\n` + 
-        Object.entries(data).map(([key, val]) => `${key}: ${val}`).join('\n');
+        Object.entries(emailData).map(([key, val]) => `${key}: ${val}`).join('\n');
       
       await sendMail(project.user.email, emailSubject, emailBody);
     } catch (emailError) {

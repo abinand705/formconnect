@@ -9,8 +9,9 @@ const submissionRoutes = require("./routes/submissions");
 const app = express();
 
 app.set("trust proxy", 1);
-app.use(cors({ origin: "https://abinandes.vercel.app" }));
-app.use(express.json());
+app.use(cors({
+  origin: ["https://abinandes.vercel.app", "http://localhost:5173"]
+})); app.use(express.json());
 
 // Routes
 app.use("/api/auth", authRoutes);

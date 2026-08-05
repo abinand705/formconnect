@@ -120,4 +120,46 @@ router.get("/:id/submissions", auth, async (req, res) => {
   }
 });
 
+// Update email fields
+router.patch("/:id/email-fields", auth, async (req, res) => {
+  try {
+    const { emailFields } = req.body;
+    const project = await prisma.project.findUnique({ where: { id: req.params.id } });
+
+    if (!project || project.userId !== req.user.userId) {
+      return res.status(404).json({ error: "Project not found" });
+    }
+
+    const updatedProject = await prisma.project.update({
+      where: { id: req.params.id },
+      data: { emailFields }
+    });
+
+    res.json(updatedProject);
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ error: "Server error" });
+  }
+});
+
+// Delete project
+router.delete("/:id", auth, async (req, res) => {
+  try {
+    const project = await prisma.project.findUnique({ where: { id: req.params.id } });
+
+    if (!project || project.userId !== req.user.userId) {
+      return res.status(404).json({ error: "Project not found" });
+    }
+
+    await prisma.project.delete({
+      where: { id: req.params.id }
+    });
+
+    res.json({ success: true });
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ error: "Server error" });
+  }
+});
+
 module.exports = router;
