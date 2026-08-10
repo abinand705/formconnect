@@ -6,6 +6,8 @@ import Sidebar from './components/sidebar'
 import Dashboard from './Dashboard'
 import ApiKeys from './ApiKeys'
 import Support from './Support'
+import Settings from './Settings'
+import Analytics from './Analytics'
 import { Wrench } from 'lucide-react'
 
 function App() {
@@ -64,16 +66,11 @@ function App() {
 
   return (
     <div className="layout-container">
-      <Sidebar activeTab={activeTab} setActiveTab={setActiveTab} email={userEmail} />
+      <Sidebar activeTab={activeTab} setActiveTab={setActiveTab} email={userEmail} handleLogout={handleLogout} />
       
       <main className="main-content">
         <header style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '2rem' }}>
           <h1 style={{ margin: 0, display: 'none' }}>FormConnect Dashboard</h1>
-          <div style={{marginLeft: 'auto'}}>
-            <button onClick={handleLogout} style={{ backgroundColor: 'transparent', border: '1px solid var(--border-color)' }}>
-              Logout
-            </button>
-          </div>
         </header>
 
         {activeTab === 'dashboard' ? (
@@ -84,6 +81,10 @@ function App() {
           <ApiKeys token={token} />
         ) : activeTab === 'support' ? (
           <Support />
+        ) : activeTab === 'analytics' ? (
+          <Analytics token={token} />
+        ) : activeTab === 'settings' ? (
+          <Settings token={token} handleLogout={handleLogout} />
         ) : (
           <div className="maintenance-view">
             <Wrench size={64} color="var(--accent-color)" />

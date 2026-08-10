@@ -1,5 +1,6 @@
 import { useState, useEffect } from 'react'
 import { Copy, RefreshCw, Eye, EyeOff } from 'lucide-react'
+import { useLoadingMessage } from './hooks/useLoadingMessage'
 
 function ApiKeyCard({ project, token, onRegenerate }) {
   const [showKey, setShowKey] = useState(false)
@@ -96,6 +97,7 @@ function ApiKeyCard({ project, token, onRegenerate }) {
 function ApiKeys({ token }) {
   const [projects, setProjects] = useState([])
   const [loading, setLoading] = useState(true)
+  const loadingMessage = useLoadingMessage(loading)
   const [error, setError] = useState(null)
 
   useEffect(() => {
@@ -124,7 +126,7 @@ function ApiKeys({ token }) {
     ))
   }
 
-  if (loading) return <div style={{ padding: '2rem', color: '#8b92a5' }}>Loading API keys...</div>
+  if (loading) return <div style={{ padding: '2rem', color: '#8b92a5' }}>{loadingMessage}</div>
   if (error) return <div className="error-message" style={{ padding: '2rem' }}>Error: {error}</div>
 
   return (

@@ -1,4 +1,5 @@
 import { useState, useEffect } from 'react'
+import { useLoadingMessage } from './hooks/useLoadingMessage'
 
 function CreateProjectModal({ isOpen, onClose, onSuccess, token }) {
   const [step, setStep] = useState(1)
@@ -311,6 +312,7 @@ function ProjectCard({ project, token, onDeleteSuccess }) {
 function ProjectList({ token }) {
   const [projects, setProjects] = useState([])
   const [loading, setLoading] = useState(true)
+  const loadingMessage = useLoadingMessage(loading)
   const [error, setError] = useState(null)
   const [isModalOpen, setIsModalOpen] = useState(false)
 
@@ -344,7 +346,7 @@ function ProjectList({ token }) {
     fetchProjects()
   }
 
-  if (loading) return <div>Loading projects...</div>
+  if (loading) return <div>{loadingMessage}</div>
   if (error) return <div className="error-message">{error}</div>
 
   return (

@@ -1,5 +1,6 @@
 import { useState, useEffect } from 'react'
 import { Folder, MessageSquare, Clock } from 'lucide-react'
+import { useLoadingMessage } from './hooks/useLoadingMessage'
 
 // Helper for relative time formatting without external libraries
 function getRelativeTime(isoDate) {
@@ -30,6 +31,7 @@ function getRelativeTime(isoDate) {
 function Dashboard({ token }) {
   const [stats, setStats] = useState(null);
   const [loading, setLoading] = useState(true);
+  const loadingMessage = useLoadingMessage(loading);
   const [error, setError] = useState(null);
 
   useEffect(() => {
@@ -58,7 +60,7 @@ function Dashboard({ token }) {
   }, [token]);
 
   if (loading) {
-    return <div style={{ padding: '2rem', color: '#8b92a5' }}>Loading stats...</div>;
+    return <div style={{ padding: '2rem', color: '#8b92a5' }}>{loadingMessage}</div>;
   }
 
   if (error) {

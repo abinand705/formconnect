@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import { 
   LayoutDashboard, 
   Folder, 
@@ -7,10 +7,23 @@ import {
   Settings, 
   Headphones,
   Zap,
-  ChevronDown
+  ChevronDown,
+  LogOut
 } from 'lucide-react';
 
-function Sidebar({ activeTab, setActiveTab, email }) {
+function Sidebar({ activeTab, setActiveTab, email, handleLogout }) {
+  const [dropdownOpen, setDropdownOpen] = useState(false);
+  const dropdownRef = useRef(null);
+
+  useEffect(() => {
+    const handleClickOutside = (event) => {
+      if (dropdownRef.current && !dropdownRef.current.contains(event.target)) {
+        setDropdownOpen(false);
+      }
+    };
+    document.addEventListener('mousedown', handleClickOutside);
+    return () => document.removeEventListener('mousedown', handleClickOutside);
+  }, []);
   const menuItems = [
     { id: 'dashboard', label: 'Dashboard', icon: LayoutDashboard },
     { id: 'projects', label: 'Projects', icon: Folder },
@@ -49,13 +62,63 @@ function Sidebar({ activeTab, setActiveTab, email }) {
       </nav>
 
       <div className="sidebar-footer">
-        <div className="user-profile">
+        <div 
+          className="user-profile" 
+          onClick={() => setDropdownOpen(!dropdownOpen)}
+          style={{ cursor: 'pointer', position: 'relative' }}
+          ref={dropdownRef}
+        >
           <div className="avatar">{avatarLetter}</div>
           <div className="user-info">
             <span className="user-name">{displayName}</span>
             <span className="user-email">{displayEmail}</span>
           </div>
-          <ChevronDown size={16} className="dropdown-icon" />
+          <ChevronDown 
+            size={16} 
+            className="dropdown-icon" 
+            style={{ transform: dropdownOpen ? 'rotate(180deg)' : 'rotate(0deg)', transition: 'transform 0.2s' }} 
+          />
+          
+          {dropdownOpen && (
+            <div style={{
+              position: 'absolute',
+              bottom: '100%',
+              left: '0',
+              width: '100%',
+              marginBottom: '0.5rem',
+              backgroundColor: 'var(--bg-secondary)',
+              border: '1px solid var(--border-color)',
+              borderRadius: 'var(--border-radius)',
+              boxShadow: '0 4px 12px rgba(0,0,0,0.5)',
+              zIndex: 10,
+              padding: '0.5rem'
+            }}>
+              <button 
+                onClick={(e) => {
+                  e.stopPropagation();
+                  handleLogout();
+                }}
+                style={{
+                  width: '100%',
+                  textAlign: 'left',
+                  backgroundColor: 'transparent',
+                  border: 'none',
+                  padding: '0.5rem',
+                  display: 'flex',
+                  alignItems: 'center',
+                  gap: '0.5rem',
+                  color: 'var(--danger-color)',
+                  cursor: 'pointer',
+                  borderRadius: 'calc(var(--border-radius) - 2px)'
+                }}
+                onMouseOver={(e) => e.currentTarget.style.backgroundColor = 'rgba(255,255,255,0.05)'}
+                onMouseOut={(e) => e.currentTarget.style.backgroundColor = 'transparent'}
+              >
+                <LogOut size={16} />
+                Logout
+              </button>
+            </div>
+          )}
         </div>
       </div>
     </aside>
