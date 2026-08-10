@@ -5,6 +5,7 @@ const authRoutes = require("./routes/auth");
 const projectRoutes = require("./routes/projects");
 const submitRoutes = require("./routes/submit");
 const submissionRoutes = require("./routes/submissions");
+const analyticsRoutes = require("./routes/analytics");
 
 const app = express();
 
@@ -18,6 +19,7 @@ app.use("/api/auth", authRoutes);
 app.use("/api/projects", projectRoutes);
 app.use("/api/submit", submitRoutes);
 app.use("/api/submissions", submissionRoutes);
+app.use("/api/analytics", analyticsRoutes);
 app.use("/api/stats", require("./routes/stats"));
 
 const PORT = process.env.PORT || 5000;
