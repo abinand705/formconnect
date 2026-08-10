@@ -24,7 +24,7 @@ model Project {
   fields      Json
   emailFields Json?
   userId      String
-  user        User         @relation(fields: [userId], references: [id])
+  user        User         @relation(fields: [userId], references: [id], onDelete: Cascade)
   submissions Submission[]
   createdAt   DateTime     @default(now())
 }
