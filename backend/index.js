@@ -11,7 +11,7 @@ const app = express();
 
 app.set("trust proxy", 1);
 app.use(cors({
-  origin: ["https://abinandes.vercel.app", "http://localhost:5173"]
+  origin: ["https://formconnect.vercel.app", "https://abinandes.vercel.app", "http://localhost:5173"]
 })); app.use(express.json());
 
 // Routes
