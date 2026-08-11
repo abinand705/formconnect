@@ -280,29 +280,69 @@ function ProjectCard({ project, token, onDeleteSuccess }) {
               <p style={{ fontSize: '0.9rem', color: '#888' }}>No submissions yet.</p>
             ) : (
               <div style={{ display: 'flex', flexDirection: 'column', gap: '0.5rem' }}>
-                {submissions.slice(0, 10).map(sub => {
-                  let parsedData = {}
-                  try {
-                    parsedData = JSON.parse(sub.data)
-                  } catch (e) {
-                    parsedData = { raw: sub.data }
-                  }
-                  return (
-                    <div key={sub.id} className="submission-item" style={{ borderLeft: sub.read ? '1px solid var(--border-color)' : '4px solid var(--accent-color)' }}>
-                      <div style={{ fontSize: '0.75rem', color: '#aaa', marginBottom: '0.5rem' }}>
-                        {new Date(sub.createdAt).toLocaleString()} {!sub.read && <span style={{ color: 'var(--accent-color)', fontWeight: 'bold' }}>• New</span>}
-                      </div>
-                      {Object.entries(parsedData).map(([k, v]) => (
-                        <div key={k} style={{ fontSize: '0.9rem', marginBottom: '0.25rem' }}>
-                          <strong style={{ color: '#ccc' }}>{k}:</strong> {String(v)}
-                        </div>
-                      ))}
-                    </div>
-                  )
-                })}
+                {submissions.slice(0, 10).map(sub => (
+                  <SubmissionItem key={sub.id} sub={sub} />
+                ))}
               </div>
             )}
           </div>
+        </div>
+      )}
+    </div>
+  )
+}
+
+function SubmissionItem({ sub }) {
+  const [expanded, setExpanded] = useState(false)
+
+  let parsedData = sub.data
+  if (typeof sub.data === 'string') {
+    try {
+      parsedData = JSON.parse(sub.data)
+    } catch (e) {
+      parsedData = { raw: sub.data }
+    }
+  } else if (!parsedData) {
+    parsedData = {}
+  }
+
+  // Determine a summary to show when collapsed (e.g., first key or just a prompt)
+  const keys = Object.keys(parsedData)
+  const summaryKey = keys.includes('email') ? 'email' : (keys.includes('name') ? 'name' : keys[0])
+  const summaryValue = summaryKey ? parsedData[summaryKey] : 'Empty submission'
+
+  return (
+    <div 
+      className="submission-item" 
+      style={{ 
+        borderLeft: sub.read ? '1px solid var(--border-color)' : '4px solid var(--accent-color)',
+        cursor: 'pointer',
+        padding: '0.75rem',
+        backgroundColor: 'var(--bg-secondary)',
+        borderRadius: '4px'
+      }}
+      onClick={() => setExpanded(!expanded)}
+    >
+      <div style={{ fontSize: '0.75rem', color: '#aaa', marginBottom: '0.5rem', display: 'flex', justifyContent: 'space-between' }}>
+        <span>
+          {new Date(sub.createdAt).toLocaleString()} {!sub.read && <span style={{ color: 'var(--accent-color)', fontWeight: 'bold' }}>• New</span>}
+        </span>
+        <span>{expanded ? '▲ Hide' : '▼ View details'}</span>
+      </div>
+      
+      {expanded ? (
+        Object.entries(parsedData).map(([k, v]) => (
+          <div key={k} style={{ fontSize: '0.9rem', marginBottom: '0.25rem', whiteSpace: 'pre-wrap' }}>
+            <strong style={{ color: '#ccc' }}>{k}:</strong> {typeof v === 'object' ? JSON.stringify(v) : String(v)}
+          </div>
+        ))
+      ) : (
+        <div style={{ fontSize: '0.9rem', color: '#ccc', textOverflow: 'ellipsis', overflow: 'hidden', whiteSpace: 'nowrap' }}>
+          {summaryKey ? (
+            <><strong style={{ color: '#ccc' }}>{summaryKey}:</strong> {typeof summaryValue === 'object' ? JSON.stringify(summaryValue) : String(summaryValue)}</>
+          ) : (
+            'Click to view details'
+          )}
         </div>
       )}
     </div>

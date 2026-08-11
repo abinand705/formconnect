@@ -72,11 +72,15 @@ function SubmissionsView({ token, project, onBack }) {
         <p>No submissions found for this project.</p>
       ) : (
         submissions.map(sub => {
-          let parsedData = {}
-          try {
-            parsedData = JSON.parse(sub.data)
-          } catch (e) {
-            parsedData = { raw: sub.data }
+          let parsedData = sub.data;
+          if (typeof sub.data === 'string') {
+            try {
+              parsedData = JSON.parse(sub.data)
+            } catch (e) {
+              parsedData = { raw: sub.data }
+            }
+          } else if (!parsedData) {
+            parsedData = {}
           }
 
           return (
@@ -91,7 +95,7 @@ function SubmissionsView({ token, project, onBack }) {
               
               {Object.entries(parsedData).map(([key, value]) => (
                 <div key={key} style={{ marginBottom: '0.25rem' }}>
-                  <strong>{key}:</strong> {String(value)}
+                  <strong>{key}:</strong> {typeof value === 'object' ? JSON.stringify(value) : String(value)}
                 </div>
               ))}
             </div>
