@@ -130,7 +130,7 @@ function ApiKeys({ token }) {
   if (error) return <div className="error-message" style={{ padding: '2rem' }}>Error: {error}</div>
 
   return (
-    <div style={{ padding: '2rem' }}>
+    <div>
       <h2 style={{ marginBottom: '2rem', marginTop: 0 }}>API Keys</h2>
       <p style={{ color: '#8b92a5', marginBottom: '2rem' }}>Manage API keys for your projects. Keep these secure as they allow submitting data to your forms.</p>
       

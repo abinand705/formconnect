@@ -1,15 +1,16 @@
 import React, { useState, useEffect, useRef } from 'react';
-import { 
-  LayoutDashboard, 
-  Folder, 
-  Key, 
-  BarChart2, 
-  Settings, 
+import {
+  LayoutDashboard,
+  Folder,
+  Key,
+  BarChart2,
+  Settings,
   Headphones,
   Zap,
   ChevronDown,
   LogOut
 } from 'lucide-react';
+import logo from '../assets/logo.svg';
 
 function Sidebar({ activeTab, setActiveTab, email, handleLogout }) {
   const [dropdownOpen, setDropdownOpen] = useState(false);
@@ -40,8 +41,8 @@ function Sidebar({ activeTab, setActiveTab, email, handleLogout }) {
   return (
     <aside className="sidebar">
       <div className="sidebar-logo">
-        <Zap className="logo-icon" fill="var(--accent-color)" stroke="var(--accent-color)" size={24} />
-        <h2>FormConnect</h2>
+        <img src={logo} alt="Logo" className="logo-icon" style={{ width: '35px', height: '35px' }} />
+        <h2><span style={{ color: '#0E386A' }}>Form</span><span style={{ color: '#09A6D9' }}>Connect</span></h2>
       </div>
 
       <nav className="sidebar-nav">
@@ -62,8 +63,8 @@ function Sidebar({ activeTab, setActiveTab, email, handleLogout }) {
       </nav>
 
       <div className="sidebar-footer">
-        <div 
-          className="user-profile" 
+        <div
+          className="user-profile"
           onClick={() => setDropdownOpen(!dropdownOpen)}
           style={{ cursor: 'pointer', position: 'relative' }}
           ref={dropdownRef}
@@ -73,18 +74,18 @@ function Sidebar({ activeTab, setActiveTab, email, handleLogout }) {
             <span className="user-name">{displayName}</span>
             <span className="user-email">{displayEmail}</span>
           </div>
-          <ChevronDown 
-            size={16} 
-            className="dropdown-icon" 
-            style={{ transform: dropdownOpen ? 'rotate(180deg)' : 'rotate(0deg)', transition: 'transform 0.2s' }} 
+          <ChevronDown
+            size={16}
+            className="dropdown-icon"
+            style={{ transform: dropdownOpen ? 'rotate(180deg)' : 'rotate(0deg)', transition: 'transform 0.2s' }}
           />
-          
+
           {dropdownOpen && (
             <div style={{
               position: 'absolute',
               bottom: '100%',
               left: '0',
-              width: '100%',
+              width: '92%',
               marginBottom: '0.5rem',
               backgroundColor: 'var(--bg-secondary)',
               border: '1px solid var(--border-color)',
@@ -93,7 +94,7 @@ function Sidebar({ activeTab, setActiveTab, email, handleLogout }) {
               zIndex: 10,
               padding: '0.5rem'
             }}>
-              <button 
+              <button
                 onClick={(e) => {
                   e.stopPropagation();
                   handleLogout();
@@ -111,7 +112,7 @@ function Sidebar({ activeTab, setActiveTab, email, handleLogout }) {
                   cursor: 'pointer',
                   borderRadius: 'calc(var(--border-radius) - 2px)'
                 }}
-                onMouseOver={(e) => e.currentTarget.style.backgroundColor = 'rgba(255,255,255,0.05)'}
+                onMouseOver={(e) => e.currentTarget.style.backgroundColor = 'rgba(255, 0, 0, 0.38)'}
                 onMouseOut={(e) => e.currentTarget.style.backgroundColor = 'transparent'}
               >
                 <LogOut size={16} />

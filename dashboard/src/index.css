@@ -301,3 +301,52 @@ input:focus {
   color: white;
   margin-top: 1rem;
 }
+
+/* Mobile Responsiveness */
+@media (max-width: 768px) {
+  .layout-container {
+    flex-direction: column;
+  }
+
+  .sidebar {
+    width: 100%;
+    height: auto;
+    border-right: none;
+    border-bottom: 1px solid #1f2128;
+    padding: 1rem;
+  }
+
+  .sidebar-logo {
+    padding-bottom: 1rem;
+    justify-content: center;
+  }
+
+  .sidebar-nav {
+    flex-direction: row;
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: 0.5rem;
+  }
+
+  .nav-item {
+    width: auto;
+    padding: 0.5rem 0.75rem;
+  }
+
+  .nav-item span {
+    display: none;
+  }
+
+  .sidebar-footer {
+    margin-top: 0.5rem;
+    padding-top: 0.5rem;
+  }
+  
+  .user-info {
+    display: none;
+  }
+
+  .main-content {
+    padding: 1rem;
+  }
+}

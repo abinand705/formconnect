@@ -9,6 +9,7 @@ import Support from './Support'
 import Settings from './Settings'
 import Analytics from './Analytics'
 import { Wrench } from 'lucide-react'
+import logo from './assets/logo.svg'
 
 function App() {
   const [token, setToken] = useState(() => localStorage.getItem('token'))
@@ -67,7 +68,7 @@ function App() {
   return (
     <div className="layout-container">
       <Sidebar activeTab={activeTab} setActiveTab={setActiveTab} email={userEmail} handleLogout={handleLogout} />
-      
+
       <main className="main-content">
         <header style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '2rem' }}>
           <h1 style={{ margin: 0, display: 'none' }}>FormConnect Dashboard</h1>

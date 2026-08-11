@@ -57,7 +57,7 @@ function Support() {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
-          apiKey: "fc_live_fd148990afb05c2de9f059de7c6b1f55",
+          apiKey: import.meta.env.VITE_SUPPORT_API_KEY,
           data: { name, email, message }
         })
       })

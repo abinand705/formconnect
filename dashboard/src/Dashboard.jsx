@@ -89,7 +89,7 @@ function Dashboard({ token }) {
   ];
 
   return (
-    <div style={{ padding: '2rem' }}>
+    <div>
       <h2 style={{ marginBottom: '2rem', marginTop: 0 }}>Dashboard</h2>
       
       <div style={{
