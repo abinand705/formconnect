@@ -106,7 +106,7 @@ function Support() {
       </div>
 
       <div>
-        <h3 style={{ marginBottom: '1rem', color: '#8b92a5' }}>Still need help? Send a message</h3>
+        <h3 style={{ marginBottom: '1rem', color: '#8b92a5' }}>Still need help or facing any issues? Send a message</h3>
         <div className="card">
           {successMsg && <div style={{ color: '#4caf50', marginBottom: '1rem', padding: '1rem', backgroundColor: 'rgba(76, 175, 80, 0.1)', borderRadius: '8px' }}>{successMsg}</div>}
           {errorMsg && <div className="error-message">{errorMsg}</div>}
