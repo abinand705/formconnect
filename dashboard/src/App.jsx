@@ -38,30 +38,16 @@ function App() {
   }
 
   if (!token) {
-    return (
-      <div className="app-container">
-        <header style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '2rem' }}>
-          <h1 style={{ margin: 0 }}>FormConnect Dashboard</h1>
-        </header>
-
-        <main>
-          {isRegistering ? (
-            <>
-              <Register onRegisterSuccess={() => setIsRegistering(false)} />
-              <p style={{ textAlign: 'center' }}>
-                Already have an account? <button onClick={() => setIsRegistering(false)} style={{ background: 'none', border: 'none', color: '#007bff', cursor: 'pointer', padding: 0 }}>Login</button>
-              </p>
-            </>
-          ) : (
-            <>
-              <Login setToken={handleLogin} />
-              <p style={{ textAlign: 'center' }}>
-                Don't have an account? <button onClick={() => setIsRegistering(true)} style={{ background: 'none', border: 'none', color: '#007bff', cursor: 'pointer', padding: 0 }}>Register</button>
-              </p>
-            </>
-          )}
-        </main>
-      </div>
+    return isRegistering ? (
+      <Register
+        onRegisterSuccess={() => setIsRegistering(false)}
+        onToggleLogin={() => setIsRegistering(false)}
+      />
+    ) : (
+      <Login
+        setToken={handleLogin}
+        onToggleRegister={() => setIsRegistering(true)}
+      />
     )
   }
 
