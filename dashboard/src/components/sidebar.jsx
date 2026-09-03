@@ -14,14 +14,19 @@ import {
 import logo from '../assets/logo.svg';
 
 function Sidebar({ activeTab, setActiveTab, email, handleLogout }) {
-  const [dropdownOpen, setDropdownOpen] = useState(false);
+  const [desktopDropdownOpen, setDesktopDropdownOpen] = useState(false);
+  const [mobileDropdownOpen, setMobileDropdownOpen] = useState(false);
   const [mobileOpen, setMobileOpen] = useState(false);
-  const dropdownRef = useRef(null);
+  const desktopDropdownRef = useRef(null);
+  const mobileDropdownRef = useRef(null);
 
   useEffect(() => {
     const handleClickOutside = (event) => {
-      if (dropdownRef.current && !dropdownRef.current.contains(event.target)) {
-        setDropdownOpen(false);
+      if (desktopDropdownRef.current && !desktopDropdownRef.current.contains(event.target)) {
+        setDesktopDropdownOpen(false);
+      }
+      if (mobileDropdownRef.current && !mobileDropdownRef.current.contains(event.target)) {
+        setMobileDropdownOpen(false);
       }
     };
     document.addEventListener('mousedown', handleClickOutside);
@@ -56,98 +61,108 @@ function Sidebar({ activeTab, setActiveTab, email, handleLogout }) {
   const displayName = displayEmail.split('@')[0];
   const avatarLetter = displayName.charAt(0).toUpperCase();
 
-  const NavContent = () => (
-    <>
-      <div className="sidebar-logo">
-        <img src={logo} alt="Logo" className="logo-icon" style={{ width: '35px', height: '35px' }} />
-        <h2><span style={{ color: '#0E386A' }}>Form</span><span style={{ color: '#09A6D9' }}>Connect</span></h2>
-      </div>
+  const renderNavContent = (isMobile = false) => {
+    const isDropdownOpen = isMobile ? mobileDropdownOpen : desktopDropdownOpen;
+    const setIsDropdownOpen = isMobile ? setMobileDropdownOpen : setDesktopDropdownOpen;
+    const ref = isMobile ? mobileDropdownRef : desktopDropdownRef;
 
-      <nav className="sidebar-nav">
-        {menuItems.map((item) => {
-          const Icon = item.icon;
-          const isActive = activeTab === item.id;
-          return (
-            <button
-              key={item.id}
-              className={`nav-item ${isActive ? 'active' : ''}`}
-              onClick={() => setActiveTab(item.id)}
-            >
-              <Icon size={20} className="nav-icon" />
-              <span>{item.label}</span>
-            </button>
-          );
-        })}
-      </nav>
-
-      <div className="sidebar-footer">
-        <div
-          className="user-profile"
-          onClick={() => setDropdownOpen(!dropdownOpen)}
-          style={{ cursor: 'pointer', position: 'relative' }}
-          ref={dropdownRef}
-        >
-          <div className="avatar">{avatarLetter}</div>
-          <div className="user-info">
-            <span className="user-name">{displayName}</span>
-            <span className="user-email">{displayEmail}</span>
-          </div>
-          <ChevronDown
-            size={16}
-            className="dropdown-icon"
-            style={{ transform: dropdownOpen ? 'rotate(180deg)' : 'rotate(0deg)', transition: 'transform 0.2s' }}
-          />
-
-          {dropdownOpen && (
-            <div style={{
-              position: 'absolute',
-              bottom: '100%',
-              left: '0',
-              width: '92%',
-              marginBottom: '0.5rem',
-              backgroundColor: 'var(--bg-secondary)',
-              border: '1px solid var(--border-color)',
-              borderRadius: 'var(--border-radius)',
-              boxShadow: '0 4px 12px rgba(0,0,0,0.5)',
-              zIndex: 10,
-              padding: '0.5rem'
-            }}>
-              <button
-                onClick={(e) => {
-                  e.stopPropagation();
-                  handleLogout();
-                }}
-                style={{
-                  width: '100%',
-                  textAlign: 'left',
-                  backgroundColor: 'transparent',
-                  border: 'none',
-                  padding: '0.5rem',
-                  display: 'flex',
-                  alignItems: 'center',
-                  gap: '0.5rem',
-                  color: 'var(--danger-color)',
-                  cursor: 'pointer',
-                  borderRadius: 'calc(var(--border-radius) - 2px)'
-                }}
-                onMouseOver={(e) => e.currentTarget.style.backgroundColor = 'rgba(255, 0, 0, 0.38)'}
-                onMouseOut={(e) => e.currentTarget.style.backgroundColor = 'transparent'}
-              >
-                <LogOut size={16} />
-                Logout
-              </button>
-            </div>
-          )}
+    return (
+      <>
+        <div className="sidebar-logo">
+          <img src={logo} alt="Logo" className="logo-icon" style={{ width: '35px', height: '35px' }} />
+          <h2><span style={{ color: '#0E386A' }}>Form</span><span style={{ color: '#09A6D9' }}>Connect</span></h2>
         </div>
-      </div>
-    </>
-  );
+
+        <nav className="sidebar-nav">
+          {menuItems.map((item) => {
+            const Icon = item.icon;
+            const isActive = activeTab === item.id;
+            return (
+              <button
+                key={item.id}
+                className={`nav-item ${isActive ? 'active' : ''}`}
+                onClick={() => setActiveTab(item.id)}
+              >
+                <Icon size={20} className="nav-icon" />
+                <span>{item.label}</span>
+              </button>
+            );
+          })}
+        </nav>
+
+        <div className="sidebar-footer">
+          <div
+            className="user-profile"
+            onClick={() => setIsDropdownOpen(!isDropdownOpen)}
+            style={{ cursor: 'pointer', position: 'relative' }}
+            ref={ref}
+          >
+            <div className="avatar">{avatarLetter}</div>
+            <div className="user-info">
+              <span className="user-name">{displayName}</span>
+              <span className="user-email">{displayEmail}</span>
+            </div>
+            <ChevronDown
+              size={16}
+              className="dropdown-icon"
+              style={{ transform: isDropdownOpen ? 'rotate(180deg)' : 'rotate(0deg)', transition: 'transform 0.2s' }}
+            />
+
+            {isDropdownOpen && (
+              <div style={{
+                position: 'absolute',
+                bottom: '100%',
+                left: '0',
+                width: '100%',
+                marginBottom: '0.5rem',
+                backgroundColor: 'var(--bg-secondary)',
+                border: '1px solid var(--border-color)',
+                borderRadius: 'var(--border-radius)',
+                boxShadow: '0 4px 12px rgba(0,0,0,0.5)',
+                zIndex: 100,
+                padding: '0.5rem',
+                boxSizing: 'border-box'
+              }}>
+                <button
+                  type="button"
+                  onClick={(e) => {
+                    e.preventDefault();
+                    e.stopPropagation();
+                    setIsDropdownOpen(false);
+                    handleLogout();
+                  }}
+                  style={{
+                    width: '100%',
+                    textAlign: 'left',
+                    backgroundColor: 'transparent',
+                    border: 'none',
+                    padding: '0.5rem',
+                    display: 'flex',
+                    alignItems: 'center',
+                    gap: '0.5rem',
+                    color: 'var(--danger-color)',
+                    cursor: 'pointer',
+                    borderRadius: 'calc(var(--border-radius) - 2px)'
+                  }}
+                  onMouseOver={(e) => e.currentTarget.style.backgroundColor = 'rgba(255, 0, 0, 0.38)'}
+                  onMouseOut={(e) => e.currentTarget.style.backgroundColor = 'transparent'}
+                >
+                  <LogOut size={16} />
+                  Logout
+                </button>
+              </div>
+            )}
+          </div>
+        </div>
+      </>
+    );
+  };
 
   return (
     <>
       {/* ===== DESKTOP SIDEBAR ===== */}
       <aside className="sidebar sidebar-desktop">
-        <NavContent />
+        {renderNavContent(false)}
       </aside>
 
       {/* ===== MOBILE TOP BAR ===== */}
@@ -185,7 +200,7 @@ function Sidebar({ activeTab, setActiveTab, email, handleLogout }) {
         >
           <X size={22} />
         </button>
-        <NavContent />
+        {renderNavContent(true)}
       </aside>
     </>
   );
