@@ -1,5 +1,6 @@
 import { useState, useEffect } from 'react'
 import { useLoadingMessage } from './hooks/useLoadingMessage'
+import CodeSnippetViewer from './components/CodeSnippetViewer'
 
 function CreateProjectModal({ isOpen, onClose, onSuccess, token }) {
   const [step, setStep] = useState(1)
@@ -10,7 +11,6 @@ function CreateProjectModal({ isOpen, onClose, onSuccess, token }) {
   const [emailFieldsInput, setEmailFieldsInput] = useState('')
   
   const [isSubmitting, setIsSubmitting] = useState(false)
-  const [copied, setCopied] = useState(false)
 
   if (!isOpen) return null
 
@@ -60,28 +60,15 @@ function CreateProjectModal({ isOpen, onClose, onSuccess, token }) {
     }
   }
 
-  const snippet = `fetch('${import.meta.env.VITE_API_URL}/api/submit', {
-  method: 'POST',
-  headers: { 'Content-Type': 'application/json' },
-  body: JSON.stringify({
-    apiKey: '${createdProject?.apiKey}',
-    data: { name: 'John Doe', email: 'john@example.com', message: 'Hello!' }
-  })
-})`
-
-  const handleCopy = () => {
-    navigator.clipboard.writeText(snippet)
-    setCopied(true)
-    setTimeout(() => setCopied(false), 2000)
-  }
-
   const overlayStyle = {
-    position: 'fixed', inset: 0, backgroundColor: 'rgba(0,0,0,0.7)',
-    display: 'flex', alignItems: 'center', justifyContent: 'center', zIndex: 1000
+    position: 'fixed', inset: 0, backgroundColor: 'rgba(0,0,0,0.75)',
+    display: 'flex', alignItems: 'center', justifyContent: 'center', zIndex: 1000,
+    padding: '1rem'
   }
   const modalStyle = {
-    backgroundColor: 'var(--bg-card)', padding: '2rem', borderRadius: '8px', 
-    width: '450px', maxWidth: '90%', border: '1px solid var(--border-color)'
+    backgroundColor: 'var(--bg-card)', padding: '1.75rem', borderRadius: '12px', 
+    width: step === 3 ? '640px' : '480px', maxWidth: '95%', border: '1px solid var(--border-color)',
+    maxHeight: '90vh', overflowY: 'auto'
   }
 
   return (
@@ -148,19 +135,16 @@ function CreateProjectModal({ isOpen, onClose, onSuccess, token }) {
         {step === 3 && (
           <div>
             <h2 style={{ color: '#4caf50', marginTop: 0 }}>Project Created!</h2>
-            <p>Your project is ready to receive submissions. Here is your connection code:</p>
-            <div style={{ position: 'relative', marginBottom: '1.5rem' }}>
-              <pre style={{ backgroundColor: '#000', padding: '1rem', borderRadius: '4px', overflowX: 'auto', fontSize: '0.85rem' }}>
-                <code>{snippet}</code>
-              </pre>
-              <button 
-                onClick={handleCopy}
-                style={{ position: 'absolute', top: '0.5rem', right: '0.5rem', fontSize: '0.75rem', padding: '0.25rem 0.5rem' }}
-              >
-                {copied ? 'Copied!' : 'Copy Code'}
-              </button>
-            </div>
-            <div style={{ display: 'flex', justifyContent: 'flex-end' }}>
+            <p style={{ color: '#ccc', fontSize: '0.9rem', marginBottom: '0.5rem' }}>
+              Your project <strong>{createdProject?.name}</strong> is ready. Choose your programming language or copy the AI prompt to connect it to your codebase:
+            </p>
+
+            <CodeSnippetViewer 
+              apiKey={createdProject?.apiKey} 
+              projectName={createdProject?.name} 
+            />
+
+            <div style={{ display: 'flex', justifyContent: 'flex-end', marginTop: '1.25rem' }}>
               <button onClick={() => onSuccess(createdProject)}>Done</button>
             </div>
           </div>
@@ -175,16 +159,6 @@ function ProjectCard({ project, token, onDeleteSuccess }) {
   const [isExpanded, setIsExpanded] = useState(false)
   const [submissions, setSubmissions] = useState([])
   const [loadingSubs, setLoadingSubs] = useState(false)
-  const [copied, setCopied] = useState(false)
-  
-  const snippet = `fetch('${import.meta.env.VITE_API_URL}/api/submit', {
-  method: 'POST',
-  headers: { 'Content-Type': 'application/json' },
-  body: JSON.stringify({
-    apiKey: '${project.apiKey}',
-    data: { name: '...', email: '...', message: '...' }
-  })
-})`
 
   useEffect(() => {
     if (isExpanded && submissions.length === 0 && !loadingSubs) {
@@ -215,12 +189,6 @@ function ProjectCard({ project, token, onDeleteSuccess }) {
         alert(err.message)
       }
     }
-  }
-
-  const handleCopyCode = () => {
-    navigator.clipboard.writeText(snippet)
-    setCopied(true)
-    setTimeout(() => setCopied(false), 2000)
   }
 
   const maskedKey = project.apiKey.length > 4 ? `fc_live_••••••••${project.apiKey.slice(-4)}` : project.apiKey
@@ -261,18 +229,14 @@ function ProjectCard({ project, token, onDeleteSuccess }) {
           </p>
           
           <div style={{ marginBottom: '2rem' }}>
-            <h4 style={{ margin: '0 0 0.5rem 0' }}>Connection Code</h4>
-            <div style={{ position: 'relative' }}>
-              <pre style={{ backgroundColor: '#000', padding: '1rem', borderRadius: '4px', overflowX: 'auto', fontSize: '0.85rem', margin: 0, border: '1px solid var(--border-color)' }}>
-                <code>{snippet}</code>
-              </pre>
-              <button 
-                onClick={handleCopyCode}
-                style={{ position: 'absolute', top: '0.5rem', right: '0.5rem', fontSize: '0.75rem', padding: '0.25rem 0.5rem' }}
-              >
-                {copied ? 'Copied!' : 'Copy'}
-              </button>
-            </div>
+            <h4 style={{ margin: '0 0 0.5rem 0' }}>Connect to Project</h4>
+            <p style={{ fontSize: '0.85rem', color: '#888', margin: '0 0 0.5rem 0' }}>
+              Select your programming language or copy the AI agent prompt to integrate with your codebase:
+            </p>
+            <CodeSnippetViewer 
+              apiKey={project.apiKey}
+              projectName={project.name}
+            />
           </div>
 
           <div>
