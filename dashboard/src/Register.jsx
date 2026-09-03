@@ -178,6 +178,15 @@ function Register({ onRegisterSuccess, onToggleLogin }) {
         {/* ==================== RIGHT REGISTER FORM ==================== */}
         <div className="auth-card-container">
           <div className="auth-glass-card">
+            {/* Mobile-only brand header */}
+            <div className="auth-mobile-brand">
+              <img
+                src={logo}
+                alt="FormConnect Logo"
+                style={{ width: '36px', height: '36px', objectFit: 'contain' }}
+              />
+              <span className="brand-title" style={{ fontSize: '1.4rem' }}>FormConnect</span>
+            </div>
             <div className="auth-card-header">
               <h2>Get started 🚀</h2>
               <p>Create your FormConnect account</p>

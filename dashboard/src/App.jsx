@@ -56,10 +56,6 @@ function App() {
       <Sidebar activeTab={activeTab} setActiveTab={setActiveTab} email={userEmail} handleLogout={handleLogout} />
 
       <main className="main-content">
-        <header style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '2rem' }}>
-          <h1 style={{ margin: 0, display: 'none' }}>FormConnect Dashboard</h1>
-        </header>
-
         {activeTab === 'dashboard' ? (
           <Dashboard token={token} />
         ) : activeTab === 'projects' ? (

@@ -149,33 +149,35 @@ const Analytics = ({ token }) => {
 
       <div className="card">
         <h3 style={{ marginBottom: '1.5rem' }}>Submissions by Project</h3>
-        <div style={{ height: `${Math.max(200, data.byProject.length * 50)}px`, width: '100%' }}>
-          <ResponsiveContainer width="100%" height="100%">
-            <BarChart data={data.byProject} layout="vertical" margin={{ top: 5, right: 30, left: 0, bottom: 5 }}>
-              <CartesianGrid strokeDasharray="3 3" stroke="rgba(255,255,255,0.15)" horizontal={false} />
-              <XAxis 
-                type="number" 
-                stroke="#a0a0a0" 
-                allowDecimals={false}
-              />
-              <YAxis 
-                dataKey="projectName" 
-                type="category" 
-                stroke="#a0a0a0"
-                tick={{ fill: '#a0a0a0', fontSize: 13 }}
-                width={150}
-              />
-              <RechartsTooltip 
-                contentStyle={{ 
-                  backgroundColor: 'var(--bg-secondary)', 
-                  border: '1px solid var(--border-color)',
-                  borderRadius: 'var(--border-radius)'
-                }}
-                cursor={{ fill: 'rgba(255,255,255,0.05)' }}
-              />
-              <Bar dataKey="count" fill="#22c55e" radius={[0, 4, 4, 0]} name="Submissions" barSize={25} />
-            </BarChart>
-          </ResponsiveContainer>
+        <div style={{ overflowX: 'auto', WebkitOverflowScrolling: 'touch' }}>
+          <div style={{ height: `${Math.max(200, data.byProject.length * 50)}px`, minWidth: '320px', width: '100%' }}>
+            <ResponsiveContainer width="100%" height="100%">
+              <BarChart data={data.byProject} layout="vertical" margin={{ top: 5, right: 30, left: 0, bottom: 5 }}>
+                <CartesianGrid strokeDasharray="3 3" stroke="rgba(255,255,255,0.15)" horizontal={false} />
+                <XAxis 
+                  type="number" 
+                  stroke="#a0a0a0" 
+                  allowDecimals={false}
+                />
+                <YAxis 
+                  dataKey="projectName" 
+                  type="category" 
+                  stroke="#a0a0a0"
+                  tick={{ fill: '#a0a0a0', fontSize: 12 }}
+                  width={120}
+                />
+                <RechartsTooltip 
+                  contentStyle={{ 
+                    backgroundColor: 'var(--bg-secondary)', 
+                    border: '1px solid var(--border-color)',
+                    borderRadius: 'var(--border-radius)'
+                  }}
+                  cursor={{ fill: 'rgba(255,255,255,0.05)' }}
+                />
+                <Bar dataKey="count" fill="#22c55e" radius={[0, 4, 4, 0]} name="Submissions" barSize={25} />
+              </BarChart>
+            </ResponsiveContainer>
+          </div>
         </div>
       </div>
     </div>

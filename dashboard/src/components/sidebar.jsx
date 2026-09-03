@@ -6,14 +6,16 @@ import {
   BarChart2,
   Settings,
   Headphones,
-  Zap,
   ChevronDown,
-  LogOut
+  LogOut,
+  Menu,
+  X
 } from 'lucide-react';
 import logo from '../assets/logo.svg';
 
 function Sidebar({ activeTab, setActiveTab, email, handleLogout }) {
   const [dropdownOpen, setDropdownOpen] = useState(false);
+  const [mobileOpen, setMobileOpen] = useState(false);
   const dropdownRef = useRef(null);
 
   useEffect(() => {
@@ -25,6 +27,22 @@ function Sidebar({ activeTab, setActiveTab, email, handleLogout }) {
     document.addEventListener('mousedown', handleClickOutside);
     return () => document.removeEventListener('mousedown', handleClickOutside);
   }, []);
+
+  // Close mobile drawer on route change
+  useEffect(() => {
+    setMobileOpen(false);
+  }, [activeTab]);
+
+  // Lock body scroll when mobile drawer is open
+  useEffect(() => {
+    if (mobileOpen) {
+      document.body.style.overflow = 'hidden';
+    } else {
+      document.body.style.overflow = '';
+    }
+    return () => { document.body.style.overflow = ''; };
+  }, [mobileOpen]);
+
   const menuItems = [
     { id: 'dashboard', label: 'Dashboard', icon: LayoutDashboard },
     { id: 'projects', label: 'Projects', icon: Folder },
@@ -38,8 +56,8 @@ function Sidebar({ activeTab, setActiveTab, email, handleLogout }) {
   const displayName = displayEmail.split('@')[0];
   const avatarLetter = displayName.charAt(0).toUpperCase();
 
-  return (
-    <aside className="sidebar">
+  const NavContent = () => (
+    <>
       <div className="sidebar-logo">
         <img src={logo} alt="Logo" className="logo-icon" style={{ width: '35px', height: '35px' }} />
         <h2><span style={{ color: '#0E386A' }}>Form</span><span style={{ color: '#09A6D9' }}>Connect</span></h2>
@@ -122,7 +140,54 @@ function Sidebar({ activeTab, setActiveTab, email, handleLogout }) {
           )}
         </div>
       </div>
-    </aside>
+    </>
+  );
+
+  return (
+    <>
+      {/* ===== DESKTOP SIDEBAR ===== */}
+      <aside className="sidebar sidebar-desktop">
+        <NavContent />
+      </aside>
+
+      {/* ===== MOBILE TOP BAR ===== */}
+      <header className="mobile-topbar">
+        <div className="mobile-topbar-brand">
+          <img src={logo} alt="Logo" style={{ width: '28px', height: '28px' }} />
+          <span style={{ fontWeight: 700, fontSize: '1.1rem', color: 'white' }}>
+            <span style={{ color: '#0E386A' }}>Form</span><span style={{ color: '#09A6D9' }}>Connect</span>
+          </span>
+        </div>
+        <button
+          className="mobile-hamburger"
+          onClick={() => setMobileOpen(true)}
+          aria-label="Open menu"
+        >
+          <Menu size={24} />
+        </button>
+      </header>
+
+      {/* ===== MOBILE DRAWER OVERLAY ===== */}
+      {mobileOpen && (
+        <div
+          className="mobile-overlay"
+          onClick={() => setMobileOpen(false)}
+          aria-label="Close menu"
+        />
+      )}
+
+      {/* ===== MOBILE DRAWER ===== */}
+      <aside className={`sidebar sidebar-mobile-drawer ${mobileOpen ? 'open' : ''}`}>
+        <button
+          className="mobile-drawer-close"
+          onClick={() => setMobileOpen(false)}
+          aria-label="Close menu"
+        >
+          <X size={22} />
+        </button>
+        <NavContent />
+      </aside>
+    </>
   );
 }
 

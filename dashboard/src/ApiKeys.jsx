@@ -40,23 +40,24 @@ function ApiKeyCard({ project, token, onRegenerate }) {
   }
 
   return (
-    <div className="card" style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '1rem' }}>
+    <div className="card" style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', flexWrap: 'wrap', gap: '1rem', marginBottom: '1rem' }}>
       <div>
         <h3 style={{ margin: '0 0 0.5rem 0' }}>{project.name}</h3>
         <p style={{ fontSize: '0.85rem', color: '#aaa', margin: '0 0 0.75rem 0' }}>
           Created {new Date(project.createdAt).toLocaleDateString()}
         </p>
         
-        <div style={{ display: 'flex', alignItems: 'center', gap: '0.75rem' }}>
+        <div style={{ display: 'flex', alignItems: 'center', gap: '0.75rem', flexWrap: 'wrap' }}>
           <code style={{ 
             backgroundColor: '#000', 
             padding: '0.5rem 0.75rem', 
             borderRadius: '4px', 
             border: '1px solid var(--border-color)',
-            fontSize: '0.9rem',
+            fontSize: '0.85rem',
             color: '#ddd',
-            minWidth: '280px',
-            display: 'inline-block'
+            wordBreak: 'break-all',
+            display: 'inline-block',
+            maxWidth: '100%'
           }}>
             {showKey ? project.apiKey : maskedKey}
           </code>

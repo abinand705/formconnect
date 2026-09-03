@@ -338,6 +338,14 @@
   justify-content: center;
 }
 
+/* Mobile brand header — hidden on desktop, visible on mobile */
+.auth-mobile-brand {
+  display: none;
+  align-items: center;
+  gap: 0.75rem;
+  margin-bottom: 2.5rem;
+}
+
 .auth-glass-card {
   width: 100%;
   max-width: 440px;
@@ -612,16 +620,26 @@
 }
 
 /* ==================== RESPONSIVE ==================== */
+
+/* Tablet: collapse to single column, center everything */
 @media (max-width: 1024px) {
+  .auth-page {
+    padding: 1.5rem 1rem;
+    align-items: flex-start;
+  }
+
   .auth-layout-container {
     grid-template-columns: 1fr;
-    gap: 2.5rem;
-    max-width: 540px;
+    gap: 2rem;
+    max-width: 520px;
+    margin: 0 auto;
+    width: 100%;
   }
 
   .auth-showcase {
     text-align: center;
     align-items: center;
+    gap: 1.25rem;
   }
 
   .brand-logo-container {
@@ -629,36 +647,130 @@
   }
 
   .hero-heading {
-    font-size: 2.25rem;
+    font-size: 2.1rem;
   }
 
   .hero-subtitle {
     margin: 0 auto;
+    font-size: 0.95rem;
   }
 
   .mockup-wrapper {
-    display: none; /* Hide 3D mockup on smaller screens for cleaner view */
+    display: none;
   }
 
   .features-grid {
-    grid-template-columns: 1fr;
-    gap: 1rem;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 0.75rem;
     width: 100%;
   }
 
   .feature-item {
-    justify-content: center;
-    text-align: left;
+    flex-direction: column;
+    align-items: center;
+    text-align: center;
+    gap: 0.5rem;
+  }
+
+  .feature-text-block h4 {
+    font-size: 0.85rem;
+  }
+
+  .feature-text-block p {
+    font-size: 0.75rem;
+  }
+
+  .auth-glass-card {
+    max-width: 100%;
   }
 }
 
-@media (max-width: 480px) {
-  .auth-glass-card {
-    padding: 2rem 1.5rem;
-    border-radius: 18px;
+/* Mobile: hide showcase entirely, show only the form */
+@media (max-width: 640px) {
+  .auth-page {
+    padding: 0;
+    min-height: 100dvh;
+    align-items: stretch;
+    background-image:
+      radial-gradient(circle at 20% 10%, rgba(99, 102, 241, 0.15) 0%, transparent 50%),
+      radial-gradient(circle at 80% 90%, rgba(56, 189, 248, 0.1) 0%, transparent 50%);
   }
 
-  .hero-heading {
-    font-size: 1.85rem;
+  .auth-layout-container {
+    grid-template-columns: 1fr;
+    gap: 0;
+    max-width: 100%;
+    min-height: 100dvh;
+    align-items: stretch;
+  }
+
+  /* Hide the entire left showcase on mobile */
+  .auth-showcase {
+    display: none;
+  }
+
+  /* Show brand header on mobile */
+  .auth-mobile-brand {
+    display: flex;
+  }
+
+  /* Form takes full screen */
+  .auth-card-container {
+    width: 100%;
+    justify-content: stretch;
+    padding: 0;
+    display: flex;
+    min-height: 100dvh;
+  }
+
+  .auth-glass-card {
+    border-radius: 0;
+    border: none;
+    padding: 2.5rem 1.5rem 2rem;
+    box-shadow: none;
+    background: rgba(9, 13, 22, 0.98);
+    max-width: 100%;
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    min-height: 100dvh;
+    box-sizing: border-box;
+  }
+
+  .auth-card-header {
+    margin-bottom: 2rem;
+  }
+
+  /* Show the brand logo at top of form on mobile */
+  .auth-glass-card::before {
+    content: '';
+    display: block;
+    margin-bottom: 2rem;
+  }
+}
+
+/* Small phones */
+@media (max-width: 390px) {
+  .auth-glass-card {
+    padding: 2rem 1.25rem 1.5rem;
+  }
+
+  .auth-card-header h2 {
+    font-size: 1.6rem;
+  }
+
+  .auth-card-header p {
+    font-size: 0.88rem;
+  }
+
+  .auth-input {
+    height: 44px;
+    font-size: 0.9rem;
+  }
+
+  .auth-primary-btn {
+    height: 44px;
+    font-size: 0.95rem;
   }
 }

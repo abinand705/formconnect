@@ -227,20 +227,20 @@ function ProjectCard({ project, token, onDeleteSuccess }) {
 
   return (
     <div className="card" style={{ marginBottom: '1rem' }}>
-      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-        <div>
-          <h3 style={{ margin: '0 0 0.5rem 0' }}>{project.name}</h3>
-          <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', fontSize: '0.85rem', color: '#999' }}>
-            <span>API Key: {showApiKey ? project.apiKey : maskedKey}</span>
+      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', flexWrap: 'wrap', gap: '0.75rem' }}>
+        <div style={{ flex: '1 1 200px', minWidth: 0 }}>
+          <h3 style={{ margin: '0 0 0.5rem 0', wordBreak: 'break-word' }}>{project.name}</h3>
+          <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', fontSize: '0.85rem', color: '#999', flexWrap: 'wrap' }}>
+            <span style={{ wordBreak: 'break-all' }}>API Key: {showApiKey ? project.apiKey : maskedKey}</span>
             <button 
               onClick={(e) => { e.stopPropagation(); setShowApiKey(!showApiKey); }}
-              style={{ padding: '0.15rem 0.4rem', fontSize: '0.7rem', backgroundColor: 'transparent', border: '1px solid #555' }}
+              style={{ padding: '0.15rem 0.4rem', fontSize: '0.7rem', backgroundColor: 'transparent', border: '1px solid #555', flexShrink: 0 }}
             >
               {showApiKey ? 'Hide' : 'Show'}
             </button>
           </div>
         </div>
-        <div style={{ display: 'flex', gap: '0.5rem' }}>
+        <div style={{ display: 'flex', gap: '0.5rem', flexShrink: 0 }}>
           <button 
             onClick={() => setIsExpanded(!isExpanded)}
             style={{ backgroundColor: 'var(--bg-secondary)', border: '1px solid var(--border-color)' }}
@@ -252,6 +252,7 @@ function ProjectCard({ project, token, onDeleteSuccess }) {
           </button>
         </div>
       </div>
+
 
       {isExpanded && (
         <div style={{ marginTop: '1.5rem', paddingTop: '1.5rem', borderTop: '1px solid var(--border-color)' }}>
@@ -391,7 +392,7 @@ function ProjectList({ token }) {
 
   return (
     <div>
-      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '2rem' }}>
+      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '2rem', flexWrap: 'wrap', gap: '1rem' }}>
         <h2 style={{ margin: 0 }}>Your Projects</h2>
         <button onClick={() => setIsModalOpen(true)}>Create Project</button>
       </div>
