@@ -10,9 +10,36 @@ const analyticsRoutes = require("./routes/analytics");
 const app = express();
 
 app.set("trust proxy", 1);
-app.use(cors({
-  origin: ["https://formconnect.vercel.app", "https://abinandes.vercel.app", "http://localhost:5173"]
-})); app.use(express.json());
+const allowedOrigins = [
+  "https://formconnect.vercel.app",
+  "https://abinandes.vercel.app",
+  "https://abinand.netlify.app",
+  "http://localhost:5173",
+  "http://localhost:3000",
+  ...(process.env.ALLOWED_ORIGINS ? process.env.ALLOWED_ORIGINS.split(",").map(o => o.trim()) : [])
+];
+
+const corsOptionsDelegate = (req, callback) => {
+  let corsOptions;
+  // Public submission endpoint accepts submissions from any website using their API key
+  if (req.path.startsWith("/api/submit") || req.url.startsWith("/api/submit")) {
+    corsOptions = { origin: true };
+  } else {
+    corsOptions = {
+      origin: (origin, cb) => {
+        if (!origin || allowedOrigins.includes(origin)) {
+          cb(null, true);
+        } else {
+          cb(null, false);
+        }
+      }
+    };
+  }
+  callback(null, corsOptions);
+};
+
+app.use(cors(corsOptionsDelegate));
+app.use(express.json());
 
 // Routes
 app.use("/api/auth", authRoutes);
