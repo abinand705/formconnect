@@ -1,6 +1,7 @@
 import { useState, useEffect } from 'react'
 import { Folder, MessageSquare, Clock } from 'lucide-react'
 import { useLoadingMessage } from './hooks/useLoadingMessage'
+import Analytics from './Analytics'
 
 // Helper for relative time formatting without external libraries
 function getRelativeTime(isoDate) {
@@ -95,7 +96,8 @@ function Dashboard({ token }) {
       <div style={{
         display: 'grid',
         gridTemplateColumns: 'repeat(auto-fit, minmax(250px, 1fr))',
-        gap: '1.5rem'
+        gap: '1.5rem',
+        marginBottom: '2.5rem'
       }}>
         {statCards.map((card, index) => {
           const Icon = card.icon;
@@ -119,6 +121,8 @@ function Dashboard({ token }) {
           );
         })}
       </div>
+
+      <Analytics token={token} />
     </div>
   );
 }

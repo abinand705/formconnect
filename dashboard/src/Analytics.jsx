@@ -5,7 +5,7 @@ import {
 } from 'recharts';
 import { useLoadingMessage } from './hooks/useLoadingMessage';
 
-const Analytics = ({ token }) => {
+const Analytics = ({ token, title = 'Usage & Analytics' }) => {
   const [data, setData] = useState({ dailyCounts: [], byProject: [] });
   const [isLoading, setIsLoading] = useState(true);
   const loadingMessage = useLoadingMessage(isLoading);
@@ -69,7 +69,7 @@ const Analytics = ({ token }) => {
   if (isLoading) {
     return (
       <div className="analytics-container">
-        <h2 style={{ marginBottom: '1.5rem' }}>Analytics</h2>
+        {title && <h2 style={{ marginBottom: '1.5rem' }}>{title}</h2>}
         <div style={{ padding: '2rem', textAlign: 'center', color: 'var(--text-secondary)' }}>
           {loadingMessage}
         </div>
@@ -80,7 +80,7 @@ const Analytics = ({ token }) => {
   if (error) {
     return (
       <div className="analytics-container">
-        <h2 style={{ marginBottom: '1.5rem' }}>Analytics</h2>
+        {title && <h2 style={{ marginBottom: '1.5rem' }}>{title}</h2>}
         <div className="card" style={{ color: 'var(--danger-color)' }}>
           Error: {error}
         </div>
@@ -93,7 +93,7 @@ const Analytics = ({ token }) => {
   if (totalSubmissions === 0) {
     return (
       <div className="analytics-container">
-        <h2 style={{ marginBottom: '1.5rem' }}>Analytics</h2>
+        {title && <h2 style={{ marginBottom: '1.5rem' }}>{title}</h2>}
         <div className="card" style={{ textAlign: 'center', padding: '3rem 1rem' }}>
           <h3 style={{ color: 'var(--text-secondary)', fontWeight: 'normal' }}>
             No submissions yet — data will appear here once your forms start receiving messages.
@@ -105,7 +105,7 @@ const Analytics = ({ token }) => {
 
   return (
     <div className="analytics-container">
-      <h2 style={{ marginBottom: '1.5rem' }}>Analytics</h2>
+      {title && <h2 style={{ marginBottom: '1.5rem' }}>{title}</h2>}
       
       <div className="card" style={{ marginBottom: '2rem' }}>
         <h3 style={{ marginBottom: '1.5rem' }}>Submissions (Last 30 Days)</h3>
