@@ -3,13 +3,14 @@ import Login from './Login'
 import Register from './Register'
 import ProjectList from './ProjectList'
 import Sidebar from './components/sidebar'
+import TopBar from './components/TopBar'
 import Dashboard from './Dashboard'
 import ApiKeys from './ApiKeys'
 import Support from './Support'
 import Settings from './Settings'
 import Analytics from './Analytics'
 import { Wrench } from 'lucide-react'
-import logo from './assets/logo.svg'
+import { Toaster } from 'sonner'
 
 function App() {
   const [token, setToken] = useState(() => localStorage.getItem('token'))
@@ -23,7 +24,6 @@ function App() {
       localStorage.setItem('email', email)
       setUserEmail(email)
     } else {
-      // Fallback if email is missing
       const storedEmail = localStorage.getItem('email')
       setUserEmail(storedEmail)
     }
@@ -52,31 +52,49 @@ function App() {
   }
 
   return (
-    <div className="layout-container">
-      <Sidebar activeTab={activeTab} setActiveTab={setActiveTab} email={userEmail} handleLogout={handleLogout} />
+    <>
+      <Toaster position="top-right" richColors closeButton />
+      <div className="layout-container">
+      <Sidebar
+        activeTab={activeTab}
+        setActiveTab={setActiveTab}
+        email={userEmail}
+        handleLogout={handleLogout}
+      />
 
-      <main className="main-content">
-        {activeTab === 'dashboard' ? (
-          <Dashboard token={token} />
-        ) : activeTab === 'projects' ? (
-          <ProjectList token={token} />
-        ) : activeTab === 'apikeys' ? (
-          <ApiKeys token={token} />
-        ) : activeTab === 'support' ? (
-          <Support />
-        ) : activeTab === 'analytics' ? (
-          <Analytics token={token} />
-        ) : activeTab === 'settings' ? (
-          <Settings token={token} handleLogout={handleLogout} />
-        ) : (
-          <div className="maintenance-view">
-            <Wrench size={64} color="var(--accent-color)" />
-            <h2>{activeTab.charAt(0).toUpperCase() + activeTab.slice(1).replace('keys', ' Keys')} Under Maintenance</h2>
-            <p>This feature is currently being built. Check back soon!</p>
-          </div>
-        )}
-      </main>
+      <div className="main-wrapper">
+        <TopBar
+          email={userEmail}
+          onLogout={handleLogout}
+          onNavigate={(tab) => setActiveTab(tab)}
+        />
+
+        <main className="main-content">
+          {activeTab === 'dashboard' ? (
+            <Dashboard token={token} onNavigate={(tab) => setActiveTab(tab)} />
+          ) : activeTab === 'projects' ? (
+            <ProjectList token={token} />
+          ) : activeTab === 'apikeys' ? (
+            <ApiKeys token={token} />
+          ) : activeTab === 'support' ? (
+            <Support />
+          ) : activeTab === 'analytics' ? (
+            <Analytics token={token} />
+          ) : activeTab === 'settings' ? (
+            <Settings token={token} handleLogout={handleLogout} />
+          ) : activeTab === 'submissions' ? (
+            <ProjectList token={token} />
+          ) : (
+            <div className="card" style={{ textAlign: 'center', padding: '3rem 1rem' }}>
+              <Wrench size={48} color="var(--primary-forest)" style={{ marginBottom: '1rem' }} />
+              <h2>{activeTab.charAt(0).toUpperCase() + activeTab.slice(1)} Feature</h2>
+              <p style={{ color: 'var(--text-secondary)' }}>Coming soon to your FormConnect dashboard.</p>
+            </div>
+          )}
+        </main>
+      </div>
     </div>
+    </>
   )
 }
 

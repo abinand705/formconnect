@@ -151,14 +151,15 @@ const Settings = ({ token, handleLogout }) => {
         
         {!showDeleteConfirm ? (
           <button 
+            type="button"
             onClick={() => setShowDeleteConfirm(true)} 
-            style={{ backgroundColor: 'var(--danger-color)' }}
+            style={{ backgroundColor: '#dc2626', color: '#ffffff', border: 'none' }}
           >
             Delete Account
           </button>
         ) : (
-          <div style={{ padding: '1rem', border: '1px solid var(--border-color)', borderRadius: 'var(--border-radius)', backgroundColor: 'var(--bg-primary)' }}>
-            <h4 style={{ marginTop: 0 }}>Are you absolutely sure?</h4>
+          <div style={{ padding: '1.25rem', border: '1px solid #fecaca', borderRadius: 'var(--radius-md)', backgroundColor: '#ffffff' }}>
+            <h4 style={{ marginTop: 0, color: '#dc2626' }}>Are you absolutely sure?</h4>
             <p style={{ fontSize: '0.9rem', marginBottom: '1rem', color: 'var(--text-secondary)' }}>
               This action cannot be undone. This will permanently delete your account and remove all your data from our servers. Please type your password to confirm.
             </p>
@@ -178,14 +179,14 @@ const Settings = ({ token, handleLogout }) => {
                 </div>
               )}
               
-              <div style={{ display: 'flex', gap: '1rem' }}>
-                <button type="submit" disabled={isDeleting} style={{ backgroundColor: 'var(--danger-color)' }}>
+              <div style={{ display: 'flex', gap: '0.75rem' }}>
+                <button type="submit" disabled={isDeleting} style={{ backgroundColor: '#dc2626', color: '#ffffff', border: 'none' }}>
                   {isDeleting ? 'Deleting...' : 'Confirm Deletion'}
                 </button>
                 <button 
                   type="button" 
+                  className="btn-secondary"
                   onClick={() => setShowDeleteConfirm(false)} 
-                  style={{ backgroundColor: 'transparent', border: '1px solid var(--border-color)' }}
                   disabled={isDeleting}
                 >
                   Cancel

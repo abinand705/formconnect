@@ -1,188 +1,196 @@
-import React, { useState, useEffect, useRef } from 'react';
+import React, { useState, useEffect } from 'react'
 import {
   LayoutDashboard,
   Folder,
   Key,
   BarChart2,
   Settings,
-  Headphones,
-  ChevronDown,
+  HelpCircle,
   LogOut,
+  MessageSquare,
   Menu,
   X
-} from 'lucide-react';
-import logo from '../assets/logo.svg';
+} from 'lucide-react'
+import logo from '../assets/logo.svg'
+import { toast } from 'sonner'
 
-function Sidebar({ activeTab, setActiveTab, email, handleLogout }) {
-  const [desktopDropdownOpen, setDesktopDropdownOpen] = useState(false);
-  const [mobileDropdownOpen, setMobileDropdownOpen] = useState(false);
-  const [mobileOpen, setMobileOpen] = useState(false);
-  const desktopDropdownRef = useRef(null);
-  const mobileDropdownRef = useRef(null);
+function Sidebar({ activeTab, setActiveTab, email, handleLogout, projectCount = 4 }) {
+  const [mobileOpen, setMobileOpen] = useState(false)
 
+  // Close mobile drawer on tab change
   useEffect(() => {
-    const handleClickOutside = (event) => {
-      if (desktopDropdownRef.current && !desktopDropdownRef.current.contains(event.target)) {
-        setDesktopDropdownOpen(false);
-      }
-      if (mobileDropdownRef.current && !mobileDropdownRef.current.contains(event.target)) {
-        setMobileDropdownOpen(false);
-      }
-    };
-    document.addEventListener('mousedown', handleClickOutside);
-    return () => document.removeEventListener('mousedown', handleClickOutside);
-  }, []);
-
-  // Close mobile drawer on route change
-  useEffect(() => {
-    setMobileOpen(false);
-  }, [activeTab]);
+    setMobileOpen(false)
+  }, [activeTab])
 
   // Lock body scroll when mobile drawer is open
   useEffect(() => {
     if (mobileOpen) {
-      document.body.style.overflow = 'hidden';
+      document.body.style.overflow = 'hidden'
     } else {
-      document.body.style.overflow = '';
+      document.body.style.overflow = ''
     }
-    return () => { document.body.style.overflow = ''; };
-  }, [mobileOpen]);
+    return () => {
+      document.body.style.overflow = ''
+    }
+  }, [mobileOpen])
 
   const menuItems = [
     { id: 'dashboard', label: 'Dashboard', icon: LayoutDashboard },
-    { id: 'projects', label: 'Projects', icon: Folder },
+    { id: 'projects', label: 'Projects', icon: Folder, badge: `${projectCount > 0 ? (projectCount > 10 ? '12+' : projectCount) : '12+'}` },
     { id: 'apikeys', label: 'API Keys', icon: Key },
     { id: 'analytics', label: 'Usage & Analytics', icon: BarChart2 },
+    { id: 'submissions', label: 'Submissions', icon: MessageSquare }
+  ]
+
+  const generalItems = [
     { id: 'settings', label: 'Settings', icon: Settings },
-    { id: 'support', label: 'Support', icon: Headphones },
-  ];
+    { id: 'support', label: 'Support', icon: HelpCircle }
+  ]
 
-  const displayEmail = email || 'user@example.com';
-  const displayName = displayEmail.split('@')[0];
-  const avatarLetter = displayName.charAt(0).toUpperCase();
+  const renderNavContent = () => (
+    <>
+      {/* Brand Logo Header */}
+      <div className="sidebar-logo">
+        <img
+          src={logo}
+          alt="FormConnect Logo"
+          style={{ width: '36px', height: '36px', objectFit: 'contain' }}
+        />
+        <span className="sidebar-logo-text">
+          <span style={{ color: '#0E386A' }}>Form</span><span style={{ color: '#09A6D9' }}>Connect</span>
+        </span>
+      </div>
 
-  const renderNavContent = (isMobile = false) => {
-    const isDropdownOpen = isMobile ? mobileDropdownOpen : desktopDropdownOpen;
-    const setIsDropdownOpen = isMobile ? setMobileDropdownOpen : setDesktopDropdownOpen;
-    const ref = isMobile ? mobileDropdownRef : desktopDropdownRef;
+      {/* MENU Section */}
+      <div className="sidebar-nav-group-label">MENU</div>
+      <nav className="sidebar-nav">
+        {menuItems.map((item) => {
+          const Icon = item.icon
+          const isActive = activeTab === item.id
+          return (
+            <button
+              key={item.id}
+              className={`nav-item ${isActive ? 'active' : ''}`}
+              onClick={() => setActiveTab(item.id)}
+            >
+              <Icon size={19} className="nav-icon" />
+              <span>{item.label}</span>
+              {item.badge && <span className="nav-item-badge">{item.badge}</span>}
+            </button>
+          )
+        })}
+      </nav>
 
-    return (
-      <>
-        <div className="sidebar-logo">
-          <img src={logo} alt="Logo" className="logo-icon" style={{ width: '35px', height: '35px' }} />
-          <h2><span style={{ color: '#0E386A' }}>Form</span><span style={{ color: '#09A6D9' }}>Connect</span></h2>
-        </div>
+      {/* GENERAL Section */}
+      <div className="sidebar-nav-group-label" style={{ marginTop: '1.25rem' }}>GENERAL</div>
+      <nav className="sidebar-nav">
+        {generalItems.map((item) => {
+          const Icon = item.icon
+          const isActive = activeTab === item.id
+          return (
+            <button
+              key={item.id}
+              className={`nav-item ${isActive ? 'active' : ''}`}
+              onClick={() => setActiveTab(item.id)}
+            >
+              <Icon size={19} className="nav-icon" />
+              <span>{item.label}</span>
+            </button>
+          )
+        })}
 
-        <nav className="sidebar-nav">
-          {menuItems.map((item) => {
-            const Icon = item.icon;
-            const isActive = activeTab === item.id;
-            return (
-              <button
-                key={item.id}
-                className={`nav-item ${isActive ? 'active' : ''}`}
-                onClick={() => setActiveTab(item.id)}
-              >
-                <Icon size={20} className="nav-icon" />
-                <span>{item.label}</span>
-              </button>
-            );
-          })}
-        </nav>
+        <button
+          className="nav-item"
+          onClick={handleLogout}
+          style={{ color: '#64748b' }}
+        >
+          <LogOut size={19} className="nav-icon" />
+          <span>Logout</span>
+        </button>
+      </nav>
 
-        <div className="sidebar-footer">
+      {/* Bottom Promo Card: "Download our Mobile App" */}
+      <div className="sidebar-promo-card">
+        {/* Subtle decorative curves inside */}
+        <svg
+          style={{
+            position: 'absolute',
+            right: '-10px',
+            bottom: '-10px',
+            width: '90px',
+            height: '90px',
+            opacity: 0.25,
+            pointerEvents: 'none'
+          }}
+          viewBox="0 0 100 100"
+          fill="none"
+        >
+          <circle cx="50" cy="50" r="40" stroke="#4ade80" strokeWidth="6" />
+          <circle cx="50" cy="50" r="20" stroke="#4ade80" strokeWidth="4" />
+        </svg>
+
+        <div style={{ display: 'flex', alignItems: 'center', gap: '0.4rem', marginBottom: '0.6rem' }}>
           <div
-            className="user-profile"
-            onClick={() => setIsDropdownOpen(!isDropdownOpen)}
-            style={{ cursor: 'pointer', position: 'relative' }}
-            ref={ref}
+            style={{
+              width: '28px',
+              height: '28px',
+              borderRadius: '8px',
+              backgroundColor: 'rgba(255, 255, 255, 0.95)',
+              display: 'flex',
+              alignItems: 'center',
+              justifyContent: 'center',
+              padding: '3px'
+            }}
           >
-            <div className="avatar">{avatarLetter}</div>
-            <div className="user-info">
-              <span className="user-name">{displayName}</span>
-              <span className="user-email">{displayEmail}</span>
-            </div>
-            <ChevronDown
-              size={16}
-              className="dropdown-icon"
-              style={{ transform: isDropdownOpen ? 'rotate(180deg)' : 'rotate(0deg)', transition: 'transform 0.2s' }}
-            />
-
-            {isDropdownOpen && (
-              <div style={{
-                position: 'absolute',
-                bottom: '100%',
-                left: '0',
-                width: '100%',
-                marginBottom: '0.5rem',
-                backgroundColor: 'var(--bg-secondary)',
-                border: '1px solid var(--border-color)',
-                borderRadius: 'var(--border-radius)',
-                boxShadow: '0 4px 12px rgba(0,0,0,0.5)',
-                zIndex: 100,
-                padding: '0.5rem',
-                boxSizing: 'border-box'
-              }}>
-                <button
-                  type="button"
-                  onClick={(e) => {
-                    e.preventDefault();
-                    e.stopPropagation();
-                    setIsDropdownOpen(false);
-                    handleLogout();
-                  }}
-                  style={{
-                    width: '100%',
-                    textAlign: 'left',
-                    backgroundColor: 'transparent',
-                    border: 'none',
-                    padding: '0.5rem',
-                    display: 'flex',
-                    alignItems: 'center',
-                    gap: '0.5rem',
-                    color: 'var(--danger-color)',
-                    cursor: 'pointer',
-                    borderRadius: 'calc(var(--border-radius) - 2px)'
-                  }}
-                  onMouseOver={(e) => e.currentTarget.style.backgroundColor = 'rgba(255, 0, 0, 0.38)'}
-                  onMouseOut={(e) => e.currentTarget.style.backgroundColor = 'transparent'}
-                >
-                  <LogOut size={16} />
-                  Logout
-                </button>
-              </div>
-            )}
+            <img src={logo} alt="FormConnect" style={{ width: '100%', height: '100%', objectFit: 'contain' }} />
           </div>
         </div>
-      </>
-    );
-  };
+
+        <div className="sidebar-promo-title">Download our Mobile App</div>
+        <div className="sidebar-promo-sub">Connect with forms anywhere</div>
+
+        <button
+          type="button"
+          className="sidebar-promo-btn"
+          onClick={() => {
+            if (navigator?.clipboard?.writeText) {
+              navigator.clipboard.writeText('https://formconnect.app/download').catch(() => {})
+            }
+            toast.success('Mobile app download link copied to clipboard!')
+          }}
+        >
+          Download
+        </button>
+      </div>
+    </>
+  )
 
   return (
     <>
-      {/* ===== DESKTOP SIDEBAR ===== */}
+      {/* Desktop Sidebar */}
       <aside className="sidebar sidebar-desktop">
-        {renderNavContent(false)}
+        {renderNavContent()}
       </aside>
 
-      {/* ===== MOBILE TOP BAR ===== */}
+      {/* Mobile Topbar */}
       <header className="mobile-topbar">
-        <div className="mobile-topbar-brand">
-          <img src={logo} alt="Logo" style={{ width: '28px', height: '28px' }} />
-          <span style={{ fontWeight: 700, fontSize: '1.1rem', color: 'white' }}>
+        <div style={{ display: 'flex', alignItems: 'center', gap: '0.65rem' }}>
+          <img src={logo} alt="FormConnect" style={{ width: '30px', height: '30px', objectFit: 'contain' }} />
+          <span style={{ fontWeight: 800, fontSize: '1.2rem', color: '#111827' }}>
             <span style={{ color: '#0E386A' }}>Form</span><span style={{ color: '#09A6D9' }}>Connect</span>
           </span>
         </div>
         <button
-          className="mobile-hamburger"
+          className="btn-icon-circle"
           onClick={() => setMobileOpen(true)}
-          aria-label="Open menu"
+          aria-label="Open navigation menu"
+          style={{ width: '38px', height: '38px' }}
         >
-          <Menu size={24} />
+          <Menu size={20} />
         </button>
       </header>
 
-      {/* ===== MOBILE DRAWER OVERLAY ===== */}
+      {/* Mobile Drawer Overlay */}
       {mobileOpen && (
         <div
           className="mobile-overlay"
@@ -191,19 +199,19 @@ function Sidebar({ activeTab, setActiveTab, email, handleLogout }) {
         />
       )}
 
-      {/* ===== MOBILE DRAWER ===== */}
+      {/* Mobile Drawer */}
       <aside className={`sidebar sidebar-mobile-drawer ${mobileOpen ? 'open' : ''}`}>
         <button
           className="mobile-drawer-close"
           onClick={() => setMobileOpen(false)}
           aria-label="Close menu"
         >
-          <X size={22} />
+          <X size={20} />
         </button>
-        {renderNavContent(true)}
+        {renderNavContent()}
       </aside>
     </>
-  );
+  )
 }
 
-export default Sidebar;
+export default Sidebar

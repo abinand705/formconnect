@@ -61,14 +61,14 @@ function CreateProjectModal({ isOpen, onClose, onSuccess, token }) {
   }
 
   const overlayStyle = {
-    position: 'fixed', inset: 0, backgroundColor: 'rgba(0,0,0,0.75)',
+    position: 'fixed', inset: 0, backgroundColor: 'rgba(0,0,0,0.45)', backdropFilter: 'blur(3px)',
     display: 'flex', alignItems: 'center', justifyContent: 'center', zIndex: 1000,
     padding: '1rem'
   }
   const modalStyle = {
-    backgroundColor: 'var(--bg-card)', padding: '1.75rem', borderRadius: '12px', 
+    backgroundColor: '#ffffff', padding: '2rem', borderRadius: 'var(--radius-xl)', 
     width: step === 3 ? '640px' : '480px', maxWidth: '95%', border: '1px solid var(--border-color)',
-    maxHeight: '90vh', overflowY: 'auto'
+    boxShadow: 'var(--shadow-lg)', maxHeight: '90vh', overflowY: 'auto'
   }
 
   return (
@@ -87,8 +87,8 @@ function CreateProjectModal({ isOpen, onClose, onSuccess, token }) {
                 placeholder="My Awesome Form"
               />
             </div>
-            <div style={{ display: 'flex', justifyContent: 'flex-end', gap: '1rem' }}>
-              <button type="button" onClick={onClose} style={{ backgroundColor: 'transparent', border: '1px solid var(--border-color)' }}>Cancel</button>
+            <div style={{ display: 'flex', justifyContent: 'flex-end', gap: '0.75rem' }}>
+              <button type="button" className="btn-secondary" onClick={onClose}>Cancel</button>
               <button type="submit" disabled={isSubmitting || !name.trim()}>
                 {isSubmitting ? 'Creating...' : 'Create'}
               </button>
@@ -99,7 +99,7 @@ function CreateProjectModal({ isOpen, onClose, onSuccess, token }) {
         {step === 2 && (
           <form onSubmit={handleSetEmailFields}>
             <h2>Email Notification Fields</h2>
-            <p style={{ fontSize: '0.9rem', color: '#ccc' }}>
+            <p style={{ fontSize: '0.9rem', color: 'var(--text-secondary)' }}>
               Which fields from the form submission should be included in the email notification?
             </p>
             <div className="form-group" style={{ display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
@@ -124,7 +124,7 @@ function CreateProjectModal({ isOpen, onClose, onSuccess, token }) {
                 />
               </div>
             )}
-            <div style={{ display: 'flex', justifyContent: 'flex-end', marginTop: '1rem' }}>
+            <div style={{ display: 'flex', justifyContent: 'flex-end', gap: '0.75rem', marginTop: '1rem' }}>
               <button type="submit" disabled={isSubmitting}>
                 {isSubmitting ? 'Saving...' : 'Next'}
               </button>
@@ -134,8 +134,8 @@ function CreateProjectModal({ isOpen, onClose, onSuccess, token }) {
 
         {step === 3 && (
           <div>
-            <h2 style={{ color: '#4caf50', marginTop: 0 }}>Project Created!</h2>
-            <p style={{ color: '#ccc', fontSize: '0.9rem', marginBottom: '0.5rem' }}>
+            <h2 style={{ color: 'var(--primary-forest)', marginTop: 0 }}>Project Created!</h2>
+            <p style={{ color: 'var(--text-secondary)', fontSize: '0.9rem', marginBottom: '0.5rem' }}>
               Your project <strong>{createdProject?.name}</strong> is ready. Choose your programming language or copy the AI prompt to connect it to your codebase:
             </p>
 
@@ -194,15 +194,19 @@ function ProjectCard({ project, token, onDeleteSuccess }) {
   const maskedKey = project.apiKey.length > 4 ? `fc_live_••••••••${project.apiKey.slice(-4)}` : project.apiKey
 
   return (
-    <div className="card" style={{ marginBottom: '1rem' }}>
+    <div className="card" style={{ marginBottom: '1.25rem' }}>
       <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', flexWrap: 'wrap', gap: '0.75rem' }}>
         <div style={{ flex: '1 1 200px', minWidth: 0 }}>
-          <h3 style={{ margin: '0 0 0.5rem 0', wordBreak: 'break-word' }}>{project.name}</h3>
-          <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', fontSize: '0.85rem', color: '#999', flexWrap: 'wrap' }}>
-            <span style={{ wordBreak: 'break-all' }}>API Key: {showApiKey ? project.apiKey : maskedKey}</span>
+          <h3 style={{ margin: '0 0 0.5rem 0', wordBreak: 'break-word', fontSize: '1.15rem' }}>{project.name}</h3>
+          <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', fontSize: '0.85rem', color: 'var(--text-secondary)', flexWrap: 'wrap' }}>
+            <span style={{ wordBreak: 'break-all', fontFamily: 'monospace', backgroundColor: '#f1f5f9', padding: '2px 8px', borderRadius: '6px' }}>
+              API Key: {showApiKey ? project.apiKey : maskedKey}
+            </span>
             <button 
+              type="button"
+              className="btn-secondary"
               onClick={(e) => { e.stopPropagation(); setShowApiKey(!showApiKey); }}
-              style={{ padding: '0.15rem 0.4rem', fontSize: '0.7rem', backgroundColor: 'transparent', border: '1px solid #555', flexShrink: 0 }}
+              style={{ padding: '0.2rem 0.6rem', fontSize: '0.75rem', flexShrink: 0 }}
             >
               {showApiKey ? 'Hide' : 'Show'}
             </button>
@@ -210,12 +214,17 @@ function ProjectCard({ project, token, onDeleteSuccess }) {
         </div>
         <div style={{ display: 'flex', gap: '0.5rem', flexShrink: 0 }}>
           <button 
+            type="button"
+            className="btn-secondary"
             onClick={() => setIsExpanded(!isExpanded)}
-            style={{ backgroundColor: 'var(--bg-secondary)', border: '1px solid var(--border-color)' }}
           >
             {isExpanded ? 'Hide Details' : 'Details'}
           </button>
-          <button onClick={handleDelete} style={{ backgroundColor: '#cc0000', border: '1px solid #990000' }}>
+          <button 
+            type="button"
+            onClick={handleDelete} 
+            style={{ backgroundColor: '#fee2e2', color: '#b91c1c', border: '1px solid #fecaca', boxShadow: 'none' }}
+          >
             Delete
           </button>
         </div>
@@ -280,31 +289,31 @@ function SubmissionItem({ sub }) {
     <div 
       className="submission-item" 
       style={{ 
-        borderLeft: sub.read ? '1px solid var(--border-color)' : '4px solid var(--accent-color)',
+        borderLeft: sub.read ? '1px solid var(--border-color)' : '4px solid var(--primary-forest)',
         cursor: 'pointer',
-        padding: '0.75rem',
-        backgroundColor: 'var(--bg-secondary)',
-        borderRadius: '4px'
+        padding: '0.9rem',
+        backgroundColor: '#ffffff',
+        borderRadius: 'var(--radius-sm)'
       }}
       onClick={() => setExpanded(!expanded)}
     >
-      <div style={{ fontSize: '0.75rem', color: '#aaa', marginBottom: '0.5rem', display: 'flex', justifyContent: 'space-between' }}>
+      <div style={{ fontSize: '0.78rem', color: 'var(--text-secondary)', marginBottom: '0.5rem', display: 'flex', justifyContent: 'space-between' }}>
         <span>
-          {new Date(sub.createdAt).toLocaleString()} {!sub.read && <span style={{ color: 'var(--accent-color)', fontWeight: 'bold' }}>• New</span>}
+          {new Date(sub.createdAt).toLocaleString()} {!sub.read && <span style={{ color: 'var(--primary-forest)', fontWeight: 'bold' }}>• New</span>}
         </span>
-        <span>{expanded ? '▲ Hide' : '▼ View details'}</span>
+        <span style={{ fontWeight: 600, color: 'var(--primary-forest)' }}>{expanded ? '▲ Hide' : '▼ View details'}</span>
       </div>
       
       {expanded ? (
         Object.entries(parsedData).map(([k, v]) => (
-          <div key={k} style={{ fontSize: '0.9rem', marginBottom: '0.25rem', whiteSpace: 'pre-wrap' }}>
-            <strong style={{ color: '#ccc' }}>{k}:</strong> {typeof v === 'object' ? JSON.stringify(v) : String(v)}
+          <div key={k} style={{ fontSize: '0.9rem', marginBottom: '0.25rem', whiteSpace: 'pre-wrap', color: 'var(--text-primary)' }}>
+            <strong style={{ color: '#111827' }}>{k}:</strong> {typeof v === 'object' ? JSON.stringify(v) : String(v)}
           </div>
         ))
       ) : (
-        <div style={{ fontSize: '0.9rem', color: '#ccc', textOverflow: 'ellipsis', overflow: 'hidden', whiteSpace: 'nowrap' }}>
+        <div style={{ fontSize: '0.9rem', color: 'var(--text-secondary)', textOverflow: 'ellipsis', overflow: 'hidden', whiteSpace: 'nowrap' }}>
           {summaryKey ? (
-            <><strong style={{ color: '#ccc' }}>{summaryKey}:</strong> {typeof summaryValue === 'object' ? JSON.stringify(summaryValue) : String(summaryValue)}</>
+            <><strong style={{ color: '#111827' }}>{summaryKey}:</strong> {typeof summaryValue === 'object' ? JSON.stringify(summaryValue) : String(summaryValue)}</>
           ) : (
             'Click to view details'
           )}
@@ -355,7 +364,7 @@ function ProjectList({ token }) {
   if (error) return <div className="error-message">{error}</div>
 
   return (
-    <div>
+    <div style={{ width: '100%' }}>
       <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '2rem', flexWrap: 'wrap', gap: '1rem' }}>
         <h2 style={{ margin: 0 }}>Your Projects</h2>
         <button onClick={() => setIsModalOpen(true)}>Create Project</button>

@@ -112,31 +112,32 @@ const Analytics = ({ token, title = 'Usage & Analytics' }) => {
         <div style={{ height: '300px', width: '100%' }}>
           <ResponsiveContainer width="100%" height="100%">
             <LineChart data={data.dailyCounts} margin={{ top: 5, right: 20, bottom: 5, left: 0 }}>
-              <CartesianGrid strokeDasharray="3 3" stroke="rgba(255,255,255,0.15)" vertical={false} />
+              <CartesianGrid strokeDasharray="3 3" stroke="#f1f5f9" vertical={false} />
               <XAxis 
                 dataKey="displayDate" 
-                stroke="#a0a0a0" 
-                tick={{ fill: '#a0a0a0', fontSize: 12 }} 
+                stroke="#cbd5e1" 
+                tick={{ fill: '#64748b', fontSize: 12 }} 
                 tickMargin={10}
               />
               <YAxis 
-                stroke="#a0a0a0" 
-                tick={{ fill: '#a0a0a0', fontSize: 12 }}
+                stroke="#cbd5e1" 
+                tick={{ fill: '#64748b', fontSize: 12 }}
                 allowDecimals={false}
               />
               <RechartsTooltip 
                 contentStyle={{ 
-                  backgroundColor: 'var(--bg-secondary)', 
-                  border: '1px solid var(--border-color)',
-                  borderRadius: 'var(--border-radius)',
-                  color: 'var(--text-primary)'
+                  backgroundColor: '#ffffff', 
+                  border: '1px solid #e2e8f0',
+                  borderRadius: '12px',
+                  color: '#111827',
+                  boxShadow: 'var(--shadow-md)'
                 }}
-                itemStyle={{ color: '#22c55e' }}
+                itemStyle={{ color: '#154234', fontWeight: 600 }}
               />
               <Line 
                 type="monotone" 
                 dataKey="count" 
-                stroke="#22c55e" 
+                stroke="#154234" 
                 strokeWidth={3}
                 dot={false}
                 activeDot={{ r: 6, fill: '#22c55e' }}
@@ -153,28 +154,30 @@ const Analytics = ({ token, title = 'Usage & Analytics' }) => {
           <div style={{ height: `${Math.max(200, data.byProject.length * 50)}px`, minWidth: '320px', width: '100%' }}>
             <ResponsiveContainer width="100%" height="100%">
               <BarChart data={data.byProject} layout="vertical" margin={{ top: 5, right: 30, left: 0, bottom: 5 }}>
-                <CartesianGrid strokeDasharray="3 3" stroke="rgba(255,255,255,0.15)" horizontal={false} />
+                <CartesianGrid strokeDasharray="3 3" stroke="#f1f5f9" horizontal={false} />
                 <XAxis 
                   type="number" 
-                  stroke="#a0a0a0" 
+                  stroke="#cbd5e1" 
+                  tick={{ fill: '#64748b', fontSize: 12 }}
                   allowDecimals={false}
                 />
                 <YAxis 
                   dataKey="projectName" 
                   type="category" 
-                  stroke="#a0a0a0"
-                  tick={{ fill: '#a0a0a0', fontSize: 12 }}
+                  stroke="#cbd5e1"
+                  tick={{ fill: '#64748b', fontSize: 12 }}
                   width={120}
                 />
                 <RechartsTooltip 
                   contentStyle={{ 
-                    backgroundColor: 'var(--bg-secondary)', 
-                    border: '1px solid var(--border-color)',
-                    borderRadius: 'var(--border-radius)'
+                    backgroundColor: '#ffffff', 
+                    border: '1px solid #e2e8f0',
+                    borderRadius: '12px',
+                    boxShadow: 'var(--shadow-md)'
                   }}
-                  cursor={{ fill: 'rgba(255,255,255,0.05)' }}
+                  cursor={{ fill: 'rgba(21, 66, 52, 0.04)' }}
                 />
-                <Bar dataKey="count" fill="#22c55e" radius={[0, 4, 4, 0]} name="Submissions" barSize={25} />
+                <Bar dataKey="count" fill="#154234" radius={[0, 8, 8, 0]} name="Submissions" barSize={24} />
               </BarChart>
             </ResponsiveContainer>
           </div>

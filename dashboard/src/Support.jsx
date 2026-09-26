@@ -30,7 +30,7 @@ function FAQItem({ q, a }) {
         {isOpen ? <ChevronUp size={20} color="#8b92a5" /> : <ChevronDown size={20} color="#8b92a5" />}
       </div>
       {isOpen && (
-        <div style={{ marginTop: '1rem', color: '#aaa', fontSize: '0.95rem', lineHeight: 1.5, borderTop: '1px solid var(--border-color)', paddingTop: '1rem' }}>
+        <div style={{ marginTop: '1rem', color: 'var(--text-secondary)', fontSize: '0.95rem', lineHeight: 1.5, borderTop: '1px solid var(--border-color)', paddingTop: '1rem' }}>
           {a}
         </div>
       )}
@@ -78,37 +78,37 @@ function Support() {
   }
 
   return (
-    <div style={{ padding: '2rem', maxWidth: '800px' }}>
-      <h2 style={{ marginBottom: '2rem', marginTop: 0 }}>Support & FAQ</h2>
+    <div style={{ maxWidth: '800px' }}>
+      <h2 style={{ marginBottom: '1.5rem', marginTop: 0 }}>Support & FAQ</h2>
 
-      <div style={{ marginBottom: '3rem' }}>
-        <h3 style={{ marginBottom: '1rem', color: '#8b92a5' }}>Frequently Asked Questions</h3>
+      <div style={{ marginBottom: '2.5rem' }}>
+        <h3 style={{ marginBottom: '1rem', color: 'var(--text-secondary)', fontSize: '1.1rem' }}>Frequently Asked Questions</h3>
         {faqs.map((faq, index) => (
           <FAQItem key={index} q={faq.q} a={faq.a} />
         ))}
       </div>
 
-      <div style={{ marginBottom: '3rem' }}>
-        <h3 style={{ marginBottom: '1rem', color: '#8b92a5' }}>Quick Links</h3>
+      <div style={{ marginBottom: '2.5rem' }}>
+        <h3 style={{ marginBottom: '1rem', color: 'var(--text-secondary)', fontSize: '1.1rem' }}>Quick Links</h3>
         <a
           href="https://github.com/abinand705/formconnect"
           target="_blank"
           rel="noopener noreferrer"
           className="card"
-          style={{ display: 'flex', alignItems: 'center', gap: '1rem', textDecoration: 'none', transition: 'border-color 0.2s', width: 'fit-content' }}
+          style={{ display: 'flex', alignItems: 'center', gap: '1rem', textDecoration: 'none', transition: 'all 0.2s', width: 'fit-content' }}
         >
-          <ExternalLink size={24} color="var(--accent-color)" />
+          <ExternalLink size={24} color="var(--primary-forest)" />
           <div>
-            <div style={{ color: 'white', fontWeight: 500, marginBottom: '0.25rem' }}>GitHub Repository</div>
-            <div style={{ color: '#aaa', fontSize: '0.85rem' }}>View source code or report issues</div>
+            <div style={{ color: 'var(--text-primary)', fontWeight: 600, marginBottom: '0.2rem' }}>GitHub Repository</div>
+            <div style={{ color: 'var(--text-secondary)', fontSize: '0.85rem' }}>View source code or report issues</div>
           </div>
         </a>
       </div>
 
       <div>
-        <h3 style={{ marginBottom: '1rem', color: '#8b92a5' }}>Still need help or facing any issues? Send a message</h3>
+        <h3 style={{ marginBottom: '1rem', color: 'var(--text-secondary)', fontSize: '1.1rem' }}>Still need help or facing any issues? Send a message</h3>
         <div className="card">
-          {successMsg && <div style={{ color: '#4caf50', marginBottom: '1rem', padding: '1rem', backgroundColor: 'rgba(76, 175, 80, 0.1)', borderRadius: '8px' }}>{successMsg}</div>}
+          {successMsg && <div style={{ color: 'var(--primary-forest)', marginBottom: '1rem', padding: '0.85rem 1rem', backgroundColor: '#eaf7ee', border: '1px solid #bbf7d0', borderRadius: '8px' }}>{successMsg}</div>}
           {errorMsg && <div className="error-message">{errorMsg}</div>}
 
           <form onSubmit={handleContactSubmit}>
@@ -142,11 +142,11 @@ function Support() {
                 style={{
                   width: '100%',
                   minHeight: '120px',
-                  backgroundColor: '#242424',
+                  backgroundColor: '#ffffff',
                   border: '1px solid var(--border-color)',
-                  borderRadius: '8px',
-                  padding: '0.6em 1.2em',
-                  color: 'white',
+                  borderRadius: 'var(--radius-md)',
+                  padding: '0.7em 1.1em',
+                  color: 'var(--text-primary)',
                   fontFamily: 'inherit',
                   resize: 'vertical',
                   boxSizing: 'border-box'
@@ -156,7 +156,7 @@ function Support() {
             <button
               type="submit"
               disabled={loading}
-              style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', marginTop: '1rem' }}
+              style={{ display: 'inline-flex', alignItems: 'center', gap: '0.5rem', marginTop: '0.5rem' }}
             >
               <Send size={16} />
               {loading ? 'Sending...' : 'Send Message'}

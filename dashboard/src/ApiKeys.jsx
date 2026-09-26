@@ -40,21 +40,22 @@ function ApiKeyCard({ project, token, onRegenerate }) {
   }
 
   return (
-    <div className="card" style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', flexWrap: 'wrap', gap: '1rem', marginBottom: '1rem' }}>
+    <div className="card" style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', flexWrap: 'wrap', gap: '1rem', marginBottom: '1.25rem' }}>
       <div>
-        <h3 style={{ margin: '0 0 0.5rem 0' }}>{project.name}</h3>
-        <p style={{ fontSize: '0.85rem', color: '#aaa', margin: '0 0 0.75rem 0' }}>
-          Created {new Date(project.createdAt).toLocaleDateString()}
+        <h3 style={{ margin: '0 0 0.4rem 0', fontSize: '1.15rem' }}>{project.name}</h3>
+        <p style={{ fontSize: '0.85rem', color: 'var(--text-secondary)', margin: '0 0 0.85rem 0' }}>
+          Created on {new Date(project.createdAt).toLocaleDateString()}
         </p>
         
-        <div style={{ display: 'flex', alignItems: 'center', gap: '0.75rem', flexWrap: 'wrap' }}>
+        <div style={{ display: 'flex', alignItems: 'center', gap: '0.65rem', flexWrap: 'wrap' }}>
           <code style={{ 
-            backgroundColor: '#000', 
-            padding: '0.5rem 0.75rem', 
-            borderRadius: '4px', 
+            backgroundColor: '#f1f5f9', 
+            padding: '0.55rem 0.85rem', 
+            borderRadius: 'var(--radius-sm)', 
             border: '1px solid var(--border-color)',
-            fontSize: '0.85rem',
-            color: '#ddd',
+            fontSize: '0.88rem',
+            color: '#111827',
+            fontFamily: 'monospace',
             wordBreak: 'break-all',
             display: 'inline-block',
             maxWidth: '100%'
@@ -63,33 +64,38 @@ function ApiKeyCard({ project, token, onRegenerate }) {
           </code>
           
           <button 
+            type="button"
+            className="btn-secondary"
             onClick={() => setShowKey(!showKey)}
             title={showKey ? 'Hide Key' : 'Show Key'}
-            style={{ padding: '0.5rem', backgroundColor: 'transparent', border: '1px solid var(--border-color)', display: 'flex', alignItems: 'center' }}
+            style={{ padding: '0.5rem 0.75rem', display: 'flex', alignItems: 'center' }}
           >
             {showKey ? <EyeOff size={16} /> : <Eye size={16} />}
           </button>
           
           <button 
+            type="button"
+            className="btn-secondary"
             onClick={handleCopy}
             title="Copy to clipboard"
-            style={{ padding: '0.5rem', backgroundColor: 'transparent', border: '1px solid var(--border-color)', display: 'flex', alignItems: 'center', gap: '0.5rem' }}
+            style={{ padding: '0.5rem 0.75rem', display: 'flex', alignItems: 'center', gap: '0.4rem' }}
           >
-            <Copy size={16} /> {copied && <span style={{ fontSize: '0.75rem' }}>Copied!</span>}
+            <Copy size={16} /> {copied && <span style={{ fontSize: '0.75rem', color: 'var(--primary-forest)', fontWeight: 600 }}>Copied!</span>}
           </button>
         </div>
       </div>
       
       <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'flex-end', gap: '0.5rem' }}>
         <button 
+          type="button"
           onClick={handleRegenerate}
           disabled={regenerating}
-          style={{ backgroundColor: 'transparent', border: '1px solid #cc0000', color: '#ff4a4a', display: 'flex', alignItems: 'center', gap: '0.5rem' }}
+          style={{ backgroundColor: '#fee2e2', color: '#b91c1c', border: '1px solid #fecaca', display: 'flex', alignItems: 'center', gap: '0.5rem', boxShadow: 'none' }}
         >
           <RefreshCw size={16} className={regenerating ? "spin" : ""} />
           {regenerating ? 'Regenerating...' : 'Regenerate Key'}
         </button>
-        {regeneratedMsg && <span style={{ color: '#4caf50', fontSize: '0.85rem' }}>Key regenerated successfully</span>}
+        {regeneratedMsg && <span style={{ color: 'var(--primary-forest)', fontSize: '0.85rem', fontWeight: 600 }}>Key regenerated successfully</span>}
       </div>
     </div>
   )
@@ -132,11 +138,11 @@ function ApiKeys({ token }) {
 
   return (
     <div>
-      <h2 style={{ marginBottom: '2rem', marginTop: 0 }}>API Keys</h2>
-      <p style={{ color: '#8b92a5', marginBottom: '2rem' }}>Manage API keys for your projects. Keep these secure as they allow submitting data to your forms.</p>
+      <h2 style={{ marginBottom: '0.4rem', marginTop: 0 }}>API Keys</h2>
+      <p style={{ color: 'var(--text-secondary)', marginBottom: '1.75rem' }}>Manage API keys for your projects. Keep these secure as they allow submitting data to your forms.</p>
       
       {projects.length === 0 ? (
-        <div className="card" style={{ textAlign: 'center', padding: '3rem 1rem', color: '#8b92a5' }}>
+        <div className="card" style={{ textAlign: 'center', padding: '3rem 1rem', color: 'var(--text-secondary)' }}>
           No projects yet — create one from the Projects tab.
         </div>
       ) : (
