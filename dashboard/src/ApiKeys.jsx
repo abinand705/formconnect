@@ -85,7 +85,7 @@ function ApiKeyCard({ project, token, onRegenerate }) {
         </div>
       </div>
       
-      <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'flex-end', gap: '0.5rem' }}>
+      <div className="apikey-card-actions" style={{ display: 'flex', flexDirection: 'column', alignItems: 'flex-end', gap: '0.5rem' }}>
         <button 
           type="button"
           onClick={handleRegenerate}

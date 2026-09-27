@@ -73,7 +73,7 @@ function CreateProjectModal({ isOpen, onClose, onSuccess, token }) {
 
   return (
     <div style={overlayStyle}>
-      <div style={modalStyle}>
+      <div className="modal-card" style={modalStyle}>
         {step === 1 && (
           <form onSubmit={handleCreate}>
             <h2>Create New Project</h2>
@@ -212,7 +212,7 @@ function ProjectCard({ project, token, onDeleteSuccess, onNavigate }) {
             </button>
           </div>
         </div>
-        <div style={{ display: 'flex', gap: '0.5rem', flexShrink: 0 }}>
+        <div className="project-card-actions" style={{ display: 'flex', gap: '0.5rem', flexShrink: 0 }}>
           <button 
             type="button"
             className="btn-secondary"

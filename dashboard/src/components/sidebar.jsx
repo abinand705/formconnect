@@ -170,6 +170,21 @@ function Sidebar({ activeTab, setActiveTab, email, handleLogout, projectCount })
     </>
   )
 
+  const displayName = email ? email.split('@')[0] : 'User'
+  const avatarLetter = displayName.charAt(0).toUpperCase()
+
+  const bottomNavItems = [
+    { id: 'dashboard', label: 'Home', icon: LayoutDashboard },
+    {
+      id: 'projects',
+      label: 'Projects',
+      icon: Folder,
+      badge: projectCount !== undefined && projectCount > 0 ? (projectCount > 99 ? '99+' : `${projectCount}`) : null
+    },
+    { id: 'submissions', label: 'Submissions', icon: MessageSquare },
+    { id: 'analytics', label: 'Analytics', icon: BarChart2 }
+  ]
+
   return (
     <>
       {/* Desktop Sidebar */}
@@ -177,22 +192,32 @@ function Sidebar({ activeTab, setActiveTab, email, handleLogout, projectCount })
         {renderNavContent()}
       </aside>
 
-      {/* Mobile Topbar */}
+      {/* Mobile Sticky Topbar */}
       <header className="mobile-topbar">
-        <div style={{ display: 'flex', alignItems: 'center', gap: '0.65rem' }}>
-          <img src={logo} alt="FormConnect" style={{ width: '30px', height: '30px', objectFit: 'contain' }} />
-          <span style={{ fontWeight: 800, fontSize: '1.2rem', color: '#111827' }}>
+        <div 
+          style={{ display: 'flex', alignItems: 'center', gap: '0.6rem', cursor: 'pointer' }}
+          onClick={() => setActiveTab('dashboard')}
+        >
+          <img src={logo} alt="FormConnect" style={{ width: '28px', height: '28px', objectFit: 'contain' }} />
+          <span style={{ fontWeight: 800, fontSize: '1.15rem', color: '#111827', letterSpacing: '-0.02em' }}>
             <span style={{ color: '#0E386A' }}>Form</span><span style={{ color: '#09A6D9' }}>Connect</span>
           </span>
         </div>
-        <button
-          className="btn-icon-circle"
-          onClick={() => setMobileOpen(true)}
-          aria-label="Open navigation menu"
-          style={{ width: '38px', height: '38px' }}
-        >
-          <Menu size={20} />
-        </button>
+
+        <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
+          {/* User profile avatar badge */}
+          <button
+            type="button"
+            className="mobile-topbar-user-badge"
+            onClick={() => setActiveTab('settings')}
+            title={`Logged in as ${email || 'User'}`}
+          >
+            <div className="mobile-avatar-circle">
+              {avatarLetter}
+            </div>
+            <span className="mobile-username-text">{displayName}</span>
+          </button>
+        </div>
       </header>
 
       {/* Mobile Drawer Overlay */}
@@ -204,17 +229,68 @@ function Sidebar({ activeTab, setActiveTab, email, handleLogout, projectCount })
         />
       )}
 
-      {/* Mobile Drawer */}
+      {/* Mobile Slide-out Drawer */}
       <aside className={`sidebar sidebar-mobile-drawer ${mobileOpen ? 'open' : ''}`}>
-        <button
-          className="mobile-drawer-close"
-          onClick={() => setMobileOpen(false)}
-          aria-label="Close menu"
-        >
-          <X size={20} />
-        </button>
-        {renderNavContent()}
+        {/* Drawer Profile Header */}
+        <div className="mobile-drawer-header">
+          <div style={{ display: 'flex', alignItems: 'center', gap: '0.75rem', minWidth: 0 }}>
+            <div className="mobile-drawer-avatar">
+              {avatarLetter}
+            </div>
+            <div style={{ minWidth: 0 }}>
+              <div className="mobile-drawer-name">{displayName}</div>
+              <div className="mobile-drawer-email">{email || 'User'}</div>
+            </div>
+          </div>
+          <button
+            type="button"
+            className="mobile-drawer-close-btn"
+            onClick={() => setMobileOpen(false)}
+            aria-label="Close menu"
+          >
+            <X size={18} />
+          </button>
+        </div>
+
+        <div className="mobile-drawer-content">
+          {renderNavContent()}
+        </div>
       </aside>
+
+      {/* Mobile Bottom Navigation Bar */}
+      <nav className="mobile-bottom-nav">
+        {bottomNavItems.map((item) => {
+          const Icon = item.icon
+          const isActive = activeTab === item.id
+          return (
+            <button
+              key={item.id}
+              type="button"
+              className={`mobile-bottom-item ${isActive ? 'active' : ''}`}
+              onClick={() => setActiveTab(item.id)}
+            >
+              <div style={{ position: 'relative', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+                <Icon size={20} className="mobile-bottom-icon" />
+                {item.badge && (
+                  <span className="mobile-bottom-badge">{item.badge}</span>
+                )}
+              </div>
+              <span className="mobile-bottom-label">{item.label}</span>
+              {isActive && <span className="mobile-bottom-active-dot" />}
+            </button>
+          )
+        })}
+
+        {/* More/Menu item to open drawer */}
+        <button
+          type="button"
+          className={`mobile-bottom-item ${['settings', 'support', 'apikeys'].includes(activeTab) ? 'active' : ''}`}
+          onClick={() => setMobileOpen(true)}
+        >
+          <Menu size={20} className="mobile-bottom-icon" />
+          <span className="mobile-bottom-label">More</span>
+        </button>
+      </nav>
     </>
   )
 }

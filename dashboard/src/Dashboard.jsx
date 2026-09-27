@@ -89,6 +89,7 @@ function CreateProjectInlineModal({ isOpen, onClose, onSuccess, token }) {
       onClick={onClose}
     >
       <div
+        className="modal-card"
         style={{
           backgroundColor: '#ffffff',
           borderRadius: 'var(--radius-xl)',
@@ -898,8 +899,9 @@ function Dashboard({ token, onNavigate }) {
 
             return (
               <div style={{ padding: '0.35rem 0 0 0' }}>
-                <div style={{ display: 'flex', gap: '8px', height: '155px', position: 'relative' }}>
-                  {/* Y-Axis: Count of submissions */}
+                <div style={{ width: '100%', overflowX: 'auto', WebkitOverflowScrolling: 'touch', paddingBottom: '4px' }}>
+                  <div style={{ display: 'flex', gap: '8px', height: '155px', position: 'relative', minWidth: `${Math.max(260, projectAnalytics.items.length * 52 + 36)}px` }}>
+                    {/* Y-Axis: Count of submissions */}
                   <div
                     style={{
                       display: 'flex',
@@ -1099,6 +1101,7 @@ function Dashboard({ token, onNavigate }) {
                     </div>
                   </div>
                 </div>
+              </div>
 
                 {/* Selected / Hovered Project Details Strip */}
                 <div
