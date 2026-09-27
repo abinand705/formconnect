@@ -1,4 +1,4 @@
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import Login from './Login'
 import Register from './Register'
 import ProjectList from './ProjectList'
@@ -18,6 +18,22 @@ function App() {
   const [userEmail, setUserEmail] = useState(() => localStorage.getItem('email'))
   const [isRegistering, setIsRegistering] = useState(false)
   const [activeTab, setActiveTab] = useState('dashboard')
+  const [projectCount, setProjectCount] = useState(0)
+
+  useEffect(() => {
+    if (!token) return
+    const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:5000'
+    fetch(`${API_URL}/api/projects`, {
+      headers: { Authorization: `Bearer ${token}` }
+    })
+      .then((res) => (res.ok ? res.json() : []))
+      .then((data) => {
+        if (Array.isArray(data)) {
+          setProjectCount(data.length)
+        }
+      })
+      .catch(() => {})
+  }, [token, activeTab])
 
   const handleLogin = (newToken, email) => {
     localStorage.setItem('token', newToken)
@@ -61,6 +77,7 @@ function App() {
         setActiveTab={setActiveTab}
         email={userEmail}
         handleLogout={handleLogout}
+        projectCount={projectCount}
       />
 
       <div className="main-wrapper">

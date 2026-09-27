@@ -14,7 +14,7 @@ import {
 import logo from '../assets/logo.svg'
 import { toast } from 'sonner'
 
-function Sidebar({ activeTab, setActiveTab, email, handleLogout, projectCount = 4 }) {
+function Sidebar({ activeTab, setActiveTab, email, handleLogout, projectCount }) {
   const [mobileOpen, setMobileOpen] = useState(false)
 
   // Close mobile drawer on tab change
@@ -36,7 +36,12 @@ function Sidebar({ activeTab, setActiveTab, email, handleLogout, projectCount = 
 
   const menuItems = [
     { id: 'dashboard', label: 'Dashboard', icon: LayoutDashboard },
-    { id: 'projects', label: 'Projects', icon: Folder, badge: `${projectCount > 0 ? (projectCount > 10 ? '12+' : projectCount) : '12+'}` },
+    {
+      id: 'projects',
+      label: 'Projects',
+      icon: Folder,
+      badge: projectCount !== undefined && projectCount > 0 ? (projectCount > 99 ? '99+' : `${projectCount}`) : null
+    },
     { id: 'apikeys', label: 'API Keys', icon: Key },
     { id: 'analytics', label: 'Usage & Analytics', icon: BarChart2 },
     { id: 'submissions', label: 'Submissions', icon: MessageSquare }

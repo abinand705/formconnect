@@ -6,11 +6,8 @@ import {
   Plug,
   Activity,
   Calendar,
-  Code2,
-  Workflow,
-  Sparkles,
-  Gauge,
-  Layers
+  BarChart3,
+  FolderPlus
 } from 'lucide-react'
 import { useLoadingMessage } from './hooks/useLoadingMessage'
 
@@ -278,22 +275,25 @@ function Dashboard({ token, onNavigate }) {
         count: item.count
       }))
     } else {
-      // Demo projects fallback if user has no projects yet
-      projectsList = [
-        { id: '1', name: 'Contact Form', count: 42 },
-        { id: '2', name: 'Newsletter', count: 34 },
-        { id: '3', name: 'Waitlist', count: 28 },
-        { id: '4', name: 'Support', count: 19 },
-        { id: '5', name: 'Feedback', count: 25 },
-        { id: '6', name: 'Beta Signup', count: 30 }
-      ]
+      projectsList = []
+    }
+
+    if (projectsList.length === 0) {
+      return {
+        items: [],
+        roundedMax: 0,
+        totalSubmissions: 0,
+        yAxisTicks: [0, 0, 0, 0, 0]
+      }
     }
 
     if (analyticsFilter === 'top') {
       projectsList = [...projectsList].sort((a, b) => b.count - a.count)
     }
 
-    const displayedProjects = projectsList.slice(0, 6)
+    const displayedProjects = analyticsFilter === 'top'
+      ? projectsList.slice(0, 6)
+      : projectsList.slice(0, 10)
     const maxCount = Math.max(...displayedProjects.map((p) => p.count), 0)
 
     let roundedMax = 5
@@ -349,28 +349,47 @@ function Dashboard({ token, onNavigate }) {
 
   // Dynamic Progress calculation
   const progressData = useMemo(() => {
+    const totalProjects = stats?.totalProjects !== undefined ? stats.totalProjects : realProjects.length
+
     if (progressMetric === 'forms-health') {
-      const total = stats?.totalProjects || realProjects.length || 4
-      const completedPct = 68
-      const inProgressPct = 24
-      const pendingPct = 8
+      if (totalProjects === 0) {
+        return {
+          percent: 0,
+          label: 'No Forms Yet',
+          subtitle: '0 Connected Forms',
+          completedPct: 0,
+          inProgressPct: 0,
+          pendingPct: 0
+        }
+      }
+
+      const activeProjectsCount = realProjects.filter(p => {
+        const c = projectSubmissionCounts[p.id] !== undefined
+          ? projectSubmissionCounts[p.id]
+          : (analyticsData?.byProject?.find(item => item.projectId === p.id)?.count || 0)
+        return c > 0
+      }).length
+
+      const completedPct = Math.round((activeProjectsCount / totalProjects) * 100)
+      const inProgressPct = 100 - completedPct
+      const pendingPct = 0
 
       let currentDisplayPercent = completedPct
       let currentDisplayLabel = 'Forms Active'
-      let currentSubtitle = `${total} Connected Forms`
+      let currentSubtitle = `${activeProjectsCount} of ${totalProjects} forms active`
 
       if (activeSegment === 'completed') {
         currentDisplayPercent = completedPct
-        currentDisplayLabel = 'Completed'
-        currentSubtitle = 'All responses handled'
+        currentDisplayLabel = 'Active Forms'
+        currentSubtitle = `${activeProjectsCount} forms with submissions`
       } else if (activeSegment === 'inprogress') {
         currentDisplayPercent = inProgressPct
-        currentDisplayLabel = 'In Progress'
-        currentSubtitle = 'Recent submissions'
+        currentDisplayLabel = 'Awaiting Data'
+        currentSubtitle = `${totalProjects - activeProjectsCount} forms awaiting responses`
       } else if (activeSegment === 'pending') {
         currentDisplayPercent = pendingPct
         currentDisplayLabel = 'Pending'
-        currentSubtitle = 'Awaiting initial setup'
+        currentSubtitle = 'All forms initialized'
       }
 
       return {
@@ -383,7 +402,7 @@ function Dashboard({ token, onNavigate }) {
       }
     } else {
       const quota = 1000
-      const used = stats?.totalSubmissions !== undefined ? stats.totalSubmissions : 412
+      const used = stats?.totalSubmissions !== undefined ? stats.totalSubmissions : 0
       const usedPct = Math.min(Math.round((used / quota) * 100), 100)
       const remainingPct = 100 - usedPct
 
@@ -414,7 +433,7 @@ function Dashboard({ token, onNavigate }) {
         pendingPct: 0
       }
     }
-  }, [progressMetric, activeSegment, stats, realProjects])
+  }, [progressMetric, activeSegment, stats, realProjects, projectSubmissionCounts, analyticsData])
 
   // Calculation for the semi-circular gauge geometry
   const gaugeGeo = useMemo(() => {
@@ -465,26 +484,37 @@ function Dashboard({ token, onNavigate }) {
   // Effective display values accounting for hover state
   const effectiveProgressDisplay = useMemo(() => {
     const active = hoveredGaugeSegment || activeSegment
+    const totalProjects = stats?.totalProjects !== undefined ? stats.totalProjects : realProjects.length
+    const used = stats?.totalSubmissions !== undefined ? stats.totalSubmissions : 0
+
+    if (totalProjects === 0 && progressMetric === 'forms-health') {
+      return {
+        percent: 0,
+        label: 'No Forms Yet',
+        subtitle: '0 Connected Forms',
+        color: 'var(--text-secondary)'
+      }
+    }
 
     if (active === 'completed') {
       return {
         percent: progressData.completedPct,
-        label: progressMetric === 'forms-health' ? 'Completed' : 'Used Submissions',
-        subtitle: progressMetric === 'forms-health' ? 'All responses handled' : `${(stats?.totalSubmissions ?? 412).toLocaleString()} received`,
+        label: progressMetric === 'forms-health' ? 'Active Forms' : 'Used Submissions',
+        subtitle: progressMetric === 'forms-health' ? `${progressData.completedPct}% active` : `${used.toLocaleString()} received`,
         color: '#154234'
       }
     } else if (active === 'inprogress') {
       return {
         percent: progressData.inProgressPct,
-        label: progressMetric === 'forms-health' ? 'In Progress' : 'Remaining Quota',
-        subtitle: progressMetric === 'forms-health' ? 'Recent submissions' : `${(1000 - (stats?.totalSubmissions ?? 412)).toLocaleString()} available`,
+        label: progressMetric === 'forms-health' ? 'Awaiting Data' : 'Remaining Quota',
+        subtitle: progressMetric === 'forms-health' ? `${progressData.inProgressPct}% awaiting data` : `${(1000 - used).toLocaleString()} available`,
         color: '#16a34a'
       }
     } else if (active === 'pending') {
       return {
         percent: progressData.pendingPct,
         label: 'Pending',
-        subtitle: 'Awaiting initial setup',
+        subtitle: 'No pending setup',
         color: '#64748b'
       }
     }
@@ -495,63 +525,14 @@ function Dashboard({ token, onNavigate }) {
       subtitle: progressData.subtitle,
       color: activeSegment !== 'all' ? 'var(--primary-forest)' : 'var(--text-secondary)'
     }
-  }, [hoveredGaugeSegment, activeSegment, progressData, progressMetric, stats])
-
-  // Default projects list
-  const defaultProjects = [
-    {
-      title: 'Develop API Endpoints',
-      due: 'Due date: Nov 26, 2024',
-      icon: (
-        <div style={{ width: '28px', height: '28px', borderRadius: '8px', backgroundColor: '#eff6ff', color: '#2563eb', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
-          <Code2 size={16} />
-        </div>
-      )
-    },
-    {
-      title: 'Onboarding Flow',
-      due: 'Due date: Nov 28, 2024',
-      icon: (
-        <div style={{ width: '28px', height: '28px', borderRadius: '8px', backgroundColor: '#ecfdf5', color: '#059669', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
-          <Workflow size={16} />
-        </div>
-      )
-    },
-    {
-      title: 'Build Dashboard',
-      due: 'Due date: Nov 30, 2024',
-      icon: (
-        <div style={{ width: '28px', height: '28px', borderRadius: '8px', backgroundColor: '#faf5ff', color: '#9333ea', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
-          <Sparkles size={16} />
-        </div>
-      )
-    },
-    {
-      title: 'Optimize Page Load',
-      due: 'Due date: Dec 5, 2024',
-      icon: (
-        <div style={{ width: '28px', height: '28px', borderRadius: '8px', backgroundColor: '#fff7ed', color: '#ea580c', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
-          <Gauge size={16} />
-        </div>
-      )
-    },
-    {
-      title: 'Cross-Browser Testing',
-      due: 'Due date: Dec 6, 2024',
-      icon: (
-        <div style={{ width: '28px', height: '28px', borderRadius: '8px', backgroundColor: '#fdf2f8', color: '#db2777', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
-          <Layers size={16} />
-        </div>
-      )
-    }
-  ]
+  }, [hoveredGaugeSegment, activeSegment, progressData, progressMetric, stats, realProjects])
 
   // Calculated stats numbers
-  const totalProjectsDisplay = stats?.totalProjects !== undefined ? stats.totalProjects : (realProjects.length || 4)
-  const apiKeysCountDisplay = stats?.totalProjects !== undefined ? stats.totalProjects : (realProjects.length || 3)
-  const totalSubmissionsDisplay = stats?.totalSubmissions !== undefined ? stats.totalSubmissions.toLocaleString() : '1,248'
-  const lastActivityDay = stats?.lastActivity ? getActivityDay(stats.lastActivity) : 'Today'
-  const lastActivityAgo = stats?.lastActivity ? getRelativeTime(stats.lastActivity) : '2 hours ago'
+  const totalProjectsDisplay = stats?.totalProjects !== undefined ? stats.totalProjects : realProjects.length
+  const apiKeysCountDisplay = stats?.totalProjects !== undefined ? stats.totalProjects : realProjects.length
+  const totalSubmissionsDisplay = (stats?.totalSubmissions ?? 0).toLocaleString()
+  const lastActivityDay = stats?.lastActivity ? getActivityDay(stats.lastActivity) : 'No activity'
+  const lastActivityAgo = stats?.lastActivity ? getRelativeTime(stats.lastActivity) : 'No submissions yet'
 
   return (
     <div style={{ width: '100%' }}>
@@ -639,7 +620,7 @@ function Dashboard({ token, onNavigate }) {
           <div className="stat-card-featured-value">{totalProjectsDisplay}</div>
           <div className="stat-card-featured-badge">
             <TrendingUp size={13} />
-            <span>Increased from last month</span>
+            <span>{totalProjectsDisplay > 0 ? `${totalProjectsDisplay} active project${totalProjectsDisplay > 1 ? 's' : ''}` : 'Get started by adding a project'}</span>
           </div>
         </div>
 
@@ -681,7 +662,7 @@ function Dashboard({ token, onNavigate }) {
               display: 'inline-flex',
               alignItems: 'center',
               gap: '0.35rem',
-              color: '#16a34a',
+              color: apiKeysCountDisplay > 0 ? '#16a34a' : 'var(--text-secondary)',
               fontSize: '0.78rem',
               fontWeight: 600
             }}
@@ -691,11 +672,11 @@ function Dashboard({ token, onNavigate }) {
                 width: '7px',
                 height: '7px',
                 borderRadius: '50%',
-                backgroundColor: '#22c55e',
+                backgroundColor: apiKeysCountDisplay > 0 ? '#22c55e' : '#cbd5e1',
                 display: 'inline-block'
               }}
             />
-            <span>Connected</span>
+            <span>{apiKeysCountDisplay > 0 ? 'Connected' : 'No keys yet'}</span>
           </div>
         </div>
 
@@ -778,13 +759,13 @@ function Dashboard({ token, onNavigate }) {
               <ArrowUpRight size={18} />
             </div>
           </div>
-          <div className="stat-card-standard-value">{lastActivityDay}</div>
+          <div className="stat-card-standard-value" style={{ fontSize: stats?.lastActivity ? '1.5rem' : '1.15rem' }}>{lastActivityDay}</div>
           <div
             style={{
               display: 'inline-flex',
               alignItems: 'center',
               gap: '0.35rem',
-              color: '#d97706',
+              color: stats?.lastActivity ? '#d97706' : 'var(--text-secondary)',
               fontSize: '0.78rem',
               fontWeight: 600
             }}
@@ -806,68 +787,112 @@ function Dashboard({ token, onNavigate }) {
               </div>
             </div>
 
-            <div style={{ display: 'flex', alignItems: 'center', gap: '0.45rem' }}>
-              {/* Filter Pills */}
-              <div
-                style={{
-                  display: 'inline-flex',
-                  padding: '2px',
-                  backgroundColor: '#f1f5f9',
-                  borderRadius: 'var(--radius-pill)',
-                  border: '1px solid var(--border-color)'
-                }}
-              >
-                <button
-                  type="button"
-                  onClick={() => setAnalyticsFilter('all')}
+            {projectAnalytics.items.length > 0 && (
+              <div style={{ display: 'flex', alignItems: 'center', gap: '0.45rem' }}>
+                {/* Filter Pills */}
+                <div
                   style={{
-                    padding: '3px 9px',
-                    fontSize: '0.72rem',
-                    fontWeight: 700,
+                    display: 'inline-flex',
+                    padding: '2px',
+                    backgroundColor: '#f1f5f9',
                     borderRadius: 'var(--radius-pill)',
-                    border: 'none',
-                    backgroundColor: analyticsFilter === 'all' ? '#ffffff' : 'transparent',
-                    color: analyticsFilter === 'all' ? 'var(--primary-forest)' : '#64748b',
-                    boxShadow: analyticsFilter === 'all' ? 'var(--shadow-xs)' : 'none',
-                    cursor: 'pointer'
+                    border: '1px solid var(--border-color)'
                   }}
                 >
-                  All Projects
-                </button>
+                  <button
+                    type="button"
+                    onClick={() => setAnalyticsFilter('all')}
+                    style={{
+                      padding: '3px 9px',
+                      fontSize: '0.72rem',
+                      fontWeight: 700,
+                      borderRadius: 'var(--radius-pill)',
+                      border: 'none',
+                      backgroundColor: analyticsFilter === 'all' ? '#ffffff' : 'transparent',
+                      color: analyticsFilter === 'all' ? 'var(--primary-forest)' : '#64748b',
+                      boxShadow: analyticsFilter === 'all' ? 'var(--shadow-xs)' : 'none',
+                      cursor: 'pointer'
+                    }}
+                  >
+                    All Projects
+                  </button>
+                  <button
+                    type="button"
+                    onClick={() => setAnalyticsFilter('top')}
+                    style={{
+                      padding: '3px 9px',
+                      fontSize: '0.72rem',
+                      fontWeight: 700,
+                      borderRadius: 'var(--radius-pill)',
+                      border: 'none',
+                      backgroundColor: analyticsFilter === 'top' ? '#ffffff' : 'transparent',
+                      color: analyticsFilter === 'top' ? 'var(--primary-forest)' : '#64748b',
+                      boxShadow: analyticsFilter === 'top' ? 'var(--shadow-xs)' : 'none',
+                      cursor: 'pointer'
+                    }}
+                  >
+                    Top Volume
+                  </button>
+                </div>
+
+                {/* View All Analytics Shortcut */}
                 <button
                   type="button"
-                  onClick={() => setAnalyticsFilter('top')}
-                  style={{
-                    padding: '3px 9px',
-                    fontSize: '0.72rem',
-                    fontWeight: 700,
-                    borderRadius: 'var(--radius-pill)',
-                    border: 'none',
-                    backgroundColor: analyticsFilter === 'top' ? '#ffffff' : 'transparent',
-                    color: analyticsFilter === 'top' ? 'var(--primary-forest)' : '#64748b',
-                    boxShadow: analyticsFilter === 'top' ? 'var(--shadow-xs)' : 'none',
-                    cursor: 'pointer'
-                  }}
+                  className="btn-micro-pill"
+                  onClick={() => onNavigate && onNavigate('analytics')}
+                  title="Open detailed analytics"
+                  style={{ cursor: 'pointer' }}
                 >
-                  Top Volume
+                  View All →
                 </button>
               </div>
-
-              {/* View All Analytics Shortcut */}
-              <button
-                type="button"
-                className="btn-micro-pill"
-                onClick={() => onNavigate && onNavigate('analytics')}
-                title="Open detailed analytics"
-                style={{ cursor: 'pointer' }}
-              >
-                View All →
-              </button>
-            </div>
+            )}
           </div>
 
-          {/* Interactive Bar Chart: Project Name on X-axis, Submission Count on Y-axis */}
-          {(() => {
+          {/* Interactive Bar Chart or Empty State */}
+          {projectAnalytics.items.length === 0 ? (
+            <div
+              style={{
+                display: 'flex',
+                flexDirection: 'column',
+                alignItems: 'center',
+                justifyContent: 'center',
+                padding: '2.5rem 1rem',
+                textAlign: 'center',
+                flex: 1
+              }}
+            >
+              <div
+                style={{
+                  width: '46px',
+                  height: '46px',
+                  borderRadius: '50%',
+                  backgroundColor: 'rgba(21, 66, 52, 0.08)',
+                  display: 'flex',
+                  alignItems: 'center',
+                  justifyContent: 'center',
+                  color: 'var(--primary-forest)',
+                  marginBottom: '0.85rem'
+                }}
+              >
+                <BarChart3 size={22} />
+              </div>
+              <div style={{ fontWeight: 700, fontSize: '0.95rem', color: '#111827', marginBottom: '0.35rem' }}>
+                No project analytics yet
+              </div>
+              <div style={{ fontSize: '0.8rem', color: 'var(--text-secondary)', maxWidth: '270px', marginBottom: '1rem', lineHeight: 1.4 }}>
+                Create a form project to start tracking submission volume and real-time activity.
+              </div>
+              <button
+                type="button"
+                className="btn-secondary"
+                onClick={() => setIsModalOpen(true)}
+                style={{ fontSize: '0.78rem', padding: '0.35rem 0.85rem' }}
+              >
+                + Add Project
+              </button>
+            </div>
+          ) : (() => {
             const activeIdx = hoveredProjectIndex !== null ? hoveredProjectIndex : selectedProjectIndex
             const activeItem = projectAnalytics.items[activeIdx] || projectAnalytics.items[0]
 
@@ -938,10 +963,18 @@ function Dashboard({ token, onNavigate }) {
                         const isActive = activeIdx === idx
                         const showTooltip = isHovered || (hoveredProjectIndex === null && selectedProjectIndex === idx)
 
-                        let barBg = item.count === 0 ? '#e2e8f0' : 'url(#diagonalHatch)'
-                        if (item.type === 'solid-forest') barBg = '#154234'
-                        if (item.type === 'solid-emerald') barBg = '#16a34a'
-                        if (item.type === 'solid-mint') barBg = '#4ade80'
+                        let barBg = '#16a34a'
+                        if (item.count === 0) {
+                          barBg = '#e2e8f0'
+                        } else if (item.type === 'solid-forest') {
+                          barBg = '#154234'
+                        } else if (item.type === 'solid-mint') {
+                          barBg = '#4ade80'
+                        } else if (item.type === 'striped') {
+                          barBg = 'repeating-linear-gradient(45deg, #16a34a, #16a34a 4px, #86efac 4px, #86efac 8px)'
+                        } else {
+                          barBg = '#16a34a'
+                        }
 
                         return (
                           <div
@@ -1437,98 +1470,106 @@ function Dashboard({ token, onNavigate }) {
                 flexWrap: 'wrap'
               }}
             >
-              <button
-                type="button"
-                onClick={() => setActiveSegment(activeSegment === 'completed' ? 'all' : 'completed')}
-                onMouseEnter={() => setHoveredGaugeSegment('completed')}
-                onMouseLeave={() => setHoveredGaugeSegment(null)}
-                style={{
-                  display: 'flex',
-                  alignItems: 'center',
-                  gap: '0.35rem',
-                  fontSize: '0.74rem',
-                  color: activeSegment === 'completed' || hoveredGaugeSegment === 'completed' ? '#111827' : '#475569',
-                  background: activeSegment === 'completed' || hoveredGaugeSegment === 'completed' ? '#e2e8f0' : '#f8fafc',
-                  border: '1px solid',
-                  borderColor: activeSegment === 'completed' || hoveredGaugeSegment === 'completed' ? '#94a3b8' : 'var(--border-color)',
-                  padding: '3px 8px',
-                  borderRadius: 'var(--radius-pill)',
-                  cursor: 'pointer',
-                  boxShadow: activeSegment === 'completed' || hoveredGaugeSegment === 'completed' ? '0 1px 3px rgba(0,0,0,0.08)' : 'none',
-                  transition: 'all 0.15s ease'
-                }}
-                title="Click or hover to inspect completed rate"
-              >
-                <span style={{ width: '8px', height: '8px', borderRadius: '50%', backgroundColor: '#154234' }} />
-                <span style={{ fontWeight: activeSegment === 'completed' || hoveredGaugeSegment === 'completed' ? 700 : 500 }}>
-                  {progressMetric === 'forms-health' ? 'Completed' : 'Used'} {progressData.completedPct}%
-                </span>
-              </button>
-
-              <button
-                type="button"
-                onClick={() => setActiveSegment(activeSegment === 'inprogress' ? 'all' : 'inprogress')}
-                onMouseEnter={() => setHoveredGaugeSegment('inprogress')}
-                onMouseLeave={() => setHoveredGaugeSegment(null)}
-                style={{
-                  display: 'flex',
-                  alignItems: 'center',
-                  gap: '0.35rem',
-                  fontSize: '0.74rem',
-                  color: activeSegment === 'inprogress' || hoveredGaugeSegment === 'inprogress' ? '#111827' : '#475569',
-                  background: activeSegment === 'inprogress' || hoveredGaugeSegment === 'inprogress' ? '#e2e8f0' : '#f8fafc',
-                  border: '1px solid',
-                  borderColor: activeSegment === 'inprogress' || hoveredGaugeSegment === 'inprogress' ? '#94a3b8' : 'var(--border-color)',
-                  padding: '3px 8px',
-                  borderRadius: 'var(--radius-pill)',
-                  cursor: 'pointer',
-                  boxShadow: activeSegment === 'inprogress' || hoveredGaugeSegment === 'inprogress' ? '0 1px 3px rgba(0,0,0,0.08)' : 'none',
-                  transition: 'all 0.15s ease'
-                }}
-                title="Click or hover to inspect in-progress rate"
-              >
-                <span style={{ width: '8px', height: '8px', borderRadius: '50%', backgroundColor: '#16a34a' }} />
-                <span style={{ fontWeight: activeSegment === 'inprogress' || hoveredGaugeSegment === 'inprogress' ? 700 : 500 }}>
-                  {progressMetric === 'forms-health' ? 'In Progress' : 'Remaining'} {progressData.inProgressPct}%
-                </span>
-              </button>
-
-              {progressMetric === 'forms-health' && (
-                <button
-                  type="button"
-                  onClick={() => setActiveSegment(activeSegment === 'pending' ? 'all' : 'pending')}
-                  onMouseEnter={() => setHoveredGaugeSegment('pending')}
-                  onMouseLeave={() => setHoveredGaugeSegment(null)}
-                  style={{
-                    display: 'flex',
-                    alignItems: 'center',
-                    gap: '0.35rem',
-                    fontSize: '0.74rem',
-                    color: activeSegment === 'pending' || hoveredGaugeSegment === 'pending' ? '#111827' : '#475569',
-                    background: activeSegment === 'pending' || hoveredGaugeSegment === 'pending' ? '#e2e8f0' : '#f8fafc',
-                    border: '1px solid',
-                    borderColor: activeSegment === 'pending' || hoveredGaugeSegment === 'pending' ? '#94a3b8' : 'var(--border-color)',
-                    padding: '3px 8px',
-                    borderRadius: 'var(--radius-pill)',
-                    cursor: 'pointer',
-                    boxShadow: activeSegment === 'pending' || hoveredGaugeSegment === 'pending' ? '0 1px 3px rgba(0,0,0,0.08)' : 'none',
-                    transition: 'all 0.15s ease'
-                  }}
-                  title="Click or hover to inspect pending rate"
-                >
-                  <span
+              {totalProjectsDisplay === 0 && progressMetric === 'forms-health' ? (
+                <div style={{ fontSize: '0.78rem', color: 'var(--text-secondary)', padding: '4px 0' }}>
+                  No forms connected yet
+                </div>
+              ) : (
+                <>
+                  <button
+                    type="button"
+                    onClick={() => setActiveSegment(activeSegment === 'completed' ? 'all' : 'completed')}
+                    onMouseEnter={() => setHoveredGaugeSegment('completed')}
+                    onMouseLeave={() => setHoveredGaugeSegment(null)}
                     style={{
-                      width: '8px',
-                      height: '8px',
-                      borderRadius: '50%',
-                      background: 'repeating-linear-gradient(45deg, #cbd5e1, #cbd5e1 2px, #ffffff 2px, #ffffff 4px)',
-                      border: '1px solid #94a3b8'
+                      display: 'flex',
+                      alignItems: 'center',
+                      gap: '0.35rem',
+                      fontSize: '0.74rem',
+                      color: activeSegment === 'completed' || hoveredGaugeSegment === 'completed' ? '#111827' : '#475569',
+                      background: activeSegment === 'completed' || hoveredGaugeSegment === 'completed' ? '#e2e8f0' : '#f8fafc',
+                      border: '1px solid',
+                      borderColor: activeSegment === 'completed' || hoveredGaugeSegment === 'completed' ? '#94a3b8' : 'var(--border-color)',
+                      padding: '3px 8px',
+                      borderRadius: 'var(--radius-pill)',
+                      cursor: 'pointer',
+                      boxShadow: activeSegment === 'completed' || hoveredGaugeSegment === 'completed' ? '0 1px 3px rgba(0,0,0,0.08)' : 'none',
+                      transition: 'all 0.15s ease'
                     }}
-                  />
-                  <span style={{ fontWeight: activeSegment === 'pending' || hoveredGaugeSegment === 'pending' ? 700 : 500 }}>
-                    Pending {progressData.pendingPct}%
-                  </span>
-                </button>
+                    title="Click or hover to inspect completed rate"
+                  >
+                    <span style={{ width: '8px', height: '8px', borderRadius: '50%', backgroundColor: '#154234' }} />
+                    <span style={{ fontWeight: activeSegment === 'completed' || hoveredGaugeSegment === 'completed' ? 700 : 500 }}>
+                      {progressMetric === 'forms-health' ? 'Active' : 'Used'} {progressData.completedPct}%
+                    </span>
+                  </button>
+
+                  <button
+                    type="button"
+                    onClick={() => setActiveSegment(activeSegment === 'inprogress' ? 'all' : 'inprogress')}
+                    onMouseEnter={() => setHoveredGaugeSegment('inprogress')}
+                    onMouseLeave={() => setHoveredGaugeSegment(null)}
+                    style={{
+                      display: 'flex',
+                      alignItems: 'center',
+                      gap: '0.35rem',
+                      fontSize: '0.74rem',
+                      color: activeSegment === 'inprogress' || hoveredGaugeSegment === 'inprogress' ? '#111827' : '#475569',
+                      background: activeSegment === 'inprogress' || hoveredGaugeSegment === 'inprogress' ? '#e2e8f0' : '#f8fafc',
+                      border: '1px solid',
+                      borderColor: activeSegment === 'inprogress' || hoveredGaugeSegment === 'inprogress' ? '#94a3b8' : 'var(--border-color)',
+                      padding: '3px 8px',
+                      borderRadius: 'var(--radius-pill)',
+                      cursor: 'pointer',
+                      boxShadow: activeSegment === 'inprogress' || hoveredGaugeSegment === 'inprogress' ? '0 1px 3px rgba(0,0,0,0.08)' : 'none',
+                      transition: 'all 0.15s ease'
+                    }}
+                    title="Click or hover to inspect in-progress rate"
+                  >
+                    <span style={{ width: '8px', height: '8px', borderRadius: '50%', backgroundColor: '#16a34a' }} />
+                    <span style={{ fontWeight: activeSegment === 'inprogress' || hoveredGaugeSegment === 'inprogress' ? 700 : 500 }}>
+                      {progressMetric === 'forms-health' ? 'Awaiting Data' : 'Remaining'} {progressData.inProgressPct}%
+                    </span>
+                  </button>
+
+                  {progressMetric === 'forms-health' && progressData.pendingPct > 0 && (
+                    <button
+                      type="button"
+                      onClick={() => setActiveSegment(activeSegment === 'pending' ? 'all' : 'pending')}
+                      onMouseEnter={() => setHoveredGaugeSegment('pending')}
+                      onMouseLeave={() => setHoveredGaugeSegment(null)}
+                      style={{
+                        display: 'flex',
+                        alignItems: 'center',
+                        gap: '0.35rem',
+                        fontSize: '0.74rem',
+                        color: activeSegment === 'pending' || hoveredGaugeSegment === 'pending' ? '#111827' : '#475569',
+                        background: activeSegment === 'pending' || hoveredGaugeSegment === 'pending' ? '#e2e8f0' : '#f8fafc',
+                        border: '1px solid',
+                        borderColor: activeSegment === 'pending' || hoveredGaugeSegment === 'pending' ? '#94a3b8' : 'var(--border-color)',
+                        padding: '3px 8px',
+                        borderRadius: 'var(--radius-pill)',
+                        cursor: 'pointer',
+                        boxShadow: activeSegment === 'pending' || hoveredGaugeSegment === 'pending' ? '0 1px 3px rgba(0,0,0,0.08)' : 'none',
+                        transition: 'all 0.15s ease'
+                      }}
+                      title="Click or hover to inspect pending rate"
+                    >
+                      <span
+                        style={{
+                          width: '8px',
+                          height: '8px',
+                          borderRadius: '50%',
+                          background: 'repeating-linear-gradient(45deg, #cbd5e1, #cbd5e1 2px, #ffffff 2px, #ffffff 4px)',
+                          border: '1px solid #94a3b8'
+                        }}
+                      />
+                      <span style={{ fontWeight: activeSegment === 'pending' || hoveredGaugeSegment === 'pending' ? 700 : 500 }}>
+                        Pending {progressData.pendingPct}%
+                      </span>
+                    </button>
+                  )}
+                </>
               )}
             </div>
           </div>
@@ -1598,35 +1639,46 @@ function Dashboard({ token, onNavigate }) {
                 </div>
               ))
             ) : (
-              defaultProjects.map((proj, idx) => (
+              <div
+                style={{
+                  display: 'flex',
+                  flexDirection: 'column',
+                  alignItems: 'center',
+                  justifyContent: 'center',
+                  padding: '2.5rem 1rem',
+                  textAlign: 'center'
+                }}
+              >
                 <div
-                  key={idx}
                   style={{
+                    width: '46px',
+                    height: '46px',
+                    borderRadius: '50%',
+                    backgroundColor: 'rgba(21, 66, 52, 0.08)',
                     display: 'flex',
                     alignItems: 'center',
-                    gap: '0.85rem'
+                    justifyContent: 'center',
+                    color: 'var(--primary-forest)',
+                    marginBottom: '0.85rem'
                   }}
                 >
-                  {proj.icon}
-                  <div style={{ flex: 1, minWidth: 0 }}>
-                    <div
-                      style={{
-                        fontSize: '0.9rem',
-                        fontWeight: 700,
-                        color: '#111827',
-                        whiteSpace: 'nowrap',
-                        overflow: 'hidden',
-                        textOverflow: 'ellipsis'
-                      }}
-                    >
-                      {proj.title}
-                    </div>
-                    <div style={{ fontSize: '0.75rem', color: '#94a3b8' }}>
-                      {proj.due}
-                    </div>
-                  </div>
+                  <FolderPlus size={22} />
                 </div>
-              ))
+                <div style={{ fontWeight: 700, fontSize: '0.95rem', color: '#111827', marginBottom: '0.35rem' }}>
+                  No projects yet
+                </div>
+                <div style={{ fontSize: '0.8rem', color: 'var(--text-secondary)', maxWidth: '240px', marginBottom: '1rem', lineHeight: 1.4 }}>
+                  Create your first project to start collecting form submissions.
+                </div>
+                <button
+                  type="button"
+                  className="btn-secondary"
+                  onClick={() => setIsModalOpen(true)}
+                  style={{ fontSize: '0.78rem', padding: '0.35rem 0.85rem' }}
+                >
+                  + Add Project
+                </button>
+              </div>
             )}
           </div>
         </div>

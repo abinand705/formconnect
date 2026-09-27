@@ -10,8 +10,8 @@ export function TopBar({ email, onLogout, onNavigate, onSearch }) {
   const notifRef = useRef(null)
 
   // Display user details
-  const displayEmail = email || 'tmichael20@gmail.com'
-  const displayName = email ? email.split('@')[0] : 'Totok Michael'
+  const displayEmail = email || 'User'
+  const displayName = email ? email.split('@')[0] : 'User'
 
   // Shortcut key listener for Cmd+F / Ctrl+F
   useEffect(() => {

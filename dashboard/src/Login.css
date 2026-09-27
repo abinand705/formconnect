@@ -4,7 +4,7 @@
   min-height: 100vh;
   width: 100%;
   background-color: #0b1a14;
-  background-image: 
+  background-image:
     radial-gradient(circle at 15% 20%, rgba(34, 197, 94, 0.15) 0%, transparent 45%),
     radial-gradient(circle at 85% 75%, rgba(21, 66, 52, 0.25) 0%, transparent 45%);
   display: flex;
@@ -68,7 +68,7 @@
 }
 
 .hero-heading .highlight-text {
-  background: linear-gradient(135deg, #818cf8 0%, #6366f1 100%);
+  background: linear-gradient(135deg, #4ade80 0%, #22c55e 100%);
   -webkit-background-clip: text;
   -webkit-text-fill-color: transparent;
   display: inline-block;
@@ -96,7 +96,7 @@
   transform: translate(-50%, -50%);
   width: 320px;
   height: 220px;
-  background: radial-gradient(circle, rgba(99, 102, 241, 0.25) 0%, rgba(14, 165, 233, 0.15) 50%, transparent 70%);
+  background: radial-gradient(circle, rgba(34, 197, 94, 0.22) 0%, rgba(21, 66, 52, 0.2) 50%, transparent 70%);
   filter: blur(40px);
   z-index: 0;
   pointer-events: none;
@@ -127,7 +127,7 @@
 .mockup-main-card {
   position: relative;
   z-index: 1;
-  background: rgba(19, 26, 42, 0.85);
+  background: #97ffed33;
   backdrop-filter: blur(12px);
   border: 1px solid rgba(255, 255, 255, 0.08);
   border-radius: 16px;
@@ -157,9 +157,18 @@
   height: 8px;
   border-radius: 50%;
 }
-.mockup-dot.red { background: #ef4444; }
-.mockup-dot.yellow { background: #f59e0b; }
-.mockup-dot.green { background: #10b981; }
+
+.mockup-dot.red {
+  background: #ef4444;
+}
+
+.mockup-dot.yellow {
+  background: #f59e0b;
+}
+
+.mockup-dot.green {
+  background: #10b981;
+}
 
 .mockup-search-pill {
   height: 12px;
@@ -187,8 +196,9 @@
   background: rgba(255, 255, 255, 0.05);
   width: 70%;
 }
+
 .mockup-nav-line.active {
-  background: rgba(99, 102, 241, 0.3);
+  background: rgba(34, 197, 94, 0.35);
   width: 90%;
 }
 
@@ -208,13 +218,13 @@
   width: 16px;
   height: 16px;
   border-radius: 4px;
-  background: rgba(99, 102, 241, 0.25);
-  border: 1px solid #6366f1;
+  background: rgba(34, 197, 94, 0.2);
+  border: 1px solid #22c55e;
   display: flex;
   align-items: center;
   justify-content: center;
   font-size: 10px;
-  color: #818cf8;
+  color: #4ade80;
 }
 
 .mockup-input-skeleton {
@@ -228,18 +238,20 @@
   align-self: flex-end;
   height: 22px;
   width: 65px;
-  background: linear-gradient(135deg, #6366f1, #4f46e5);
+  background: linear-gradient(135deg, #22c55e, #15803d);
   border-radius: 6px;
   margin-top: 0.25rem;
   display: flex;
   align-items: center;
   justify-content: center;
+  box-shadow: 0 4px 12px rgba(34, 197, 94, 0.3);
 }
+
 .mockup-submit-pill::after {
   content: '';
   width: 24px;
   height: 6px;
-  background: rgba(255, 255, 255, 0.8);
+  background: rgba(255, 255, 255, 0.85);
   border-radius: 3px;
 }
 
@@ -249,12 +261,12 @@
   bottom: 0px;
   right: 40px;
   z-index: 2;
-  background: rgba(26, 35, 58, 0.92);
+  background: rgba(18, 32, 26, 0.92);
   backdrop-filter: blur(12px);
-  border: 1px solid rgba(255, 255, 255, 0.12);
+  border: 1px solid rgba(74, 222, 128, 0.2);
   border-radius: 14px;
   padding: 0.85rem 1rem;
-  box-shadow: 0 15px 30px -10px rgba(0, 0, 0, 0.5);
+  box-shadow: 0 15px 30px -10px rgba(0, 0, 0, 0.5), 0 0 16px -4px rgba(34, 197, 94, 0.15);
   display: flex;
   align-items: flex-end;
   gap: 0.5rem;
@@ -264,7 +276,7 @@
 .chart-bar {
   width: 8px;
   border-radius: 4px 4px 0 0;
-  background: linear-gradient(to top, #4f46e5, #818cf8);
+  background: linear-gradient(to top, #15803d, #4ade80);
 }
 
 .floating-badge-card {
@@ -272,13 +284,13 @@
   top: 60px;
   left: -15px;
   z-index: 2;
-  background: rgba(26, 35, 58, 0.9);
+  background: rgba(18, 32, 26, 0.9);
   backdrop-filter: blur(12px);
-  border: 1px solid rgba(255, 255, 255, 0.12);
+  border: 1px solid rgba(74, 222, 128, 0.2);
   border-radius: 12px;
   padding: 0.65rem;
-  box-shadow: 0 12px 24px -8px rgba(0, 0, 0, 0.5);
-  color: #818cf8;
+  box-shadow: 0 12px 24px -8px rgba(0, 0, 0, 0.5), 0 0 16px -4px rgba(34, 197, 94, 0.2);
+  color: #4ade80;
   display: flex;
   align-items: center;
   justify-content: center;
@@ -286,8 +298,13 @@
 }
 
 @keyframes floatSubtle {
-  0% { transform: translateY(0px); }
-  100% { transform: translateY(-8px); }
+  0% {
+    transform: translateY(0px);
+  }
+
+  100% {
+    transform: translateY(-8px);
+  }
 }
 
 /* Features List */
@@ -308,12 +325,12 @@
   width: 38px;
   height: 38px;
   border-radius: 10px;
-  background: rgba(99, 102, 241, 0.12);
-  border: 1px solid rgba(99, 102, 241, 0.25);
+  background: rgba(34, 197, 94, 0.12);
+  border: 1px solid rgba(34, 197, 94, 0.25);
   display: flex;
   align-items: center;
   justify-content: center;
-  color: #818cf8;
+  color: #4ade80;
   flex-shrink: 0;
 }
 
@@ -349,7 +366,7 @@
 .auth-glass-card {
   width: 100%;
   max-width: 440px;
-  background: rgba(18, 24, 38, 0.88);
+  background: rgb(127 151 134 / 36%);
   backdrop-filter: blur(20px);
   border: 1px solid rgba(255, 255, 255, 0.09);
   border-radius: 24px;
@@ -375,7 +392,7 @@
 
 .auth-card-header p {
   font-size: 0.95rem;
-  color: #94a3b8;
+  color: #000000;
   margin: 0;
 }
 
@@ -470,7 +487,7 @@
   box-shadow: 0 0 0 3px rgba(34, 197, 94, 0.2);
 }
 
-.auth-input:focus + .auth-input-icon,
+.auth-input:focus+.auth-input-icon,
 .auth-input-container:focus-within .auth-input-icon {
   color: #4ade80;
 }
@@ -585,11 +602,11 @@
   margin-top: 1.75rem;
   text-align: center;
   font-size: 0.88rem;
-  color: #94a3b8;
+  color: #000000;
 }
 
 .auth-switch-link {
-  color: #818cf8;
+  color: #4ade80;
   font-weight: 600;
   background: none;
   border: none;
@@ -603,7 +620,7 @@
 }
 
 .auth-switch-link:hover {
-  color: #a5b4fc;
+  color: #86efac;
   text-decoration: underline;
   transform: none;
   box-shadow: none;
@@ -615,8 +632,13 @@
 }
 
 @keyframes spin {
-  from { transform: rotate(0deg); }
-  to { transform: rotate(360deg); }
+  from {
+    transform: rotate(0deg);
+  }
+
+  to {
+    transform: rotate(360deg);
+  }
 }
 
 /* ==================== RESPONSIVE ==================== */
@@ -692,8 +714,8 @@
     min-height: 100dvh;
     align-items: stretch;
     background-image:
-      radial-gradient(circle at 20% 10%, rgba(99, 102, 241, 0.15) 0%, transparent 50%),
-      radial-gradient(circle at 80% 90%, rgba(56, 189, 248, 0.1) 0%, transparent 50%);
+      radial-gradient(circle at 20% 10%, rgba(34, 197, 94, 0.15) 0%, transparent 50%),
+      radial-gradient(circle at 80% 90%, rgba(21, 66, 52, 0.2) 0%, transparent 50%);
   }
 
   .auth-layout-container {
