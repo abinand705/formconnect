@@ -154,9 +154,9 @@ function Sidebar({ activeTab, setActiveTab, email, handleLogout, projectCount = 
           className="sidebar-promo-btn"
           onClick={() => {
             if (navigator?.clipboard?.writeText) {
-              navigator.clipboard.writeText('https://formconnect.app/download').catch(() => {})
+              navigator.clipboard.writeText('https://formconnect.app/download').catch(() => { })
             }
-            toast.success('Mobile app download link copied to clipboard!')
+            toast.success('This feature will be available soon!')
           }}
         >
           Download

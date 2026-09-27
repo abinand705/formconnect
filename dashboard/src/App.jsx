@@ -9,6 +9,7 @@ import ApiKeys from './ApiKeys'
 import Support from './Support'
 import Settings from './Settings'
 import Analytics from './Analytics'
+import SubmissionsView from './SubmissionsView'
 import { Wrench } from 'lucide-react'
 import { Toaster } from 'sonner'
 
@@ -73,7 +74,7 @@ function App() {
           {activeTab === 'dashboard' ? (
             <Dashboard token={token} onNavigate={(tab) => setActiveTab(tab)} />
           ) : activeTab === 'projects' ? (
-            <ProjectList token={token} />
+            <ProjectList token={token} onNavigate={(tab) => setActiveTab(tab)} />
           ) : activeTab === 'apikeys' ? (
             <ApiKeys token={token} />
           ) : activeTab === 'support' ? (
@@ -83,7 +84,7 @@ function App() {
           ) : activeTab === 'settings' ? (
             <Settings token={token} handleLogout={handleLogout} />
           ) : activeTab === 'submissions' ? (
-            <ProjectList token={token} />
+            <SubmissionsView token={token} onNavigate={(tab) => setActiveTab(tab)} />
           ) : (
             <div className="card" style={{ textAlign: 'center', padding: '3rem 1rem' }}>
               <Wrench size={48} color="var(--primary-forest)" style={{ marginBottom: '1rem' }} />

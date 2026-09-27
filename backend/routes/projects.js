@@ -42,6 +42,11 @@ router.get("/", auth, async (req, res) => {
   try {
     const projects = await prisma.project.findMany({
       where: { userId: req.user.userId },
+      include: {
+        _count: {
+          select: { submissions: true }
+        }
+      },
       orderBy: { createdAt: 'desc' }
     });
     res.json(projects);

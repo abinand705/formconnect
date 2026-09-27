@@ -38,13 +38,21 @@ router.get("/", auth, async (req, res) => {
       return acc;
     }, {});
 
-    // Fetch submissions
-    const submissions = await prisma.submission.findMany({
+    // Fetch submissions for the 30-day daily breakdown
+    const recentSubmissions = await prisma.submission.findMany({
       where: {
         projectId: { in: projectIds },
         createdAt: { gte: thirtyDaysAgo }
       },
       select: { projectId: true, createdAt: true }
+    });
+
+    // Fetch all-time submissions to compute accurate per-project counts
+    const allProjectSubmissions = await prisma.submission.findMany({
+      where: {
+        projectId: { in: projectIds }
+      },
+      select: { projectId: true }
     });
 
     // Initialize daily counts map from the pre-generated empty list
@@ -53,18 +61,20 @@ router.get("/", auth, async (req, res) => {
       dailyMap[entry.date] = 0;
     });
 
-    // Initialize project counts map
+    recentSubmissions.forEach(sub => {
+      const dateStr = sub.createdAt.toISOString().split("T")[0];
+      if (dailyMap[dateStr] !== undefined) {
+        dailyMap[dateStr]++;
+      }
+    });
+
+    // Initialize project counts map for every project
     const projectMap = {};
     projects.forEach(p => {
       projectMap[p.id] = 0;
     });
 
-    // Aggregate submissions
-    submissions.forEach(sub => {
-      const dateStr = sub.createdAt.toISOString().split("T")[0];
-      if (dailyMap[dateStr] !== undefined) {
-        dailyMap[dateStr]++;
-      }
+    allProjectSubmissions.forEach(sub => {
       if (projectMap[sub.projectId] !== undefined) {
         projectMap[sub.projectId]++;
       }
@@ -76,6 +86,7 @@ router.get("/", auth, async (req, res) => {
     }));
 
     const byProject = Object.keys(projectMap).map(projectId => ({
+      projectId,
       projectName: projectNameMap[projectId],
       count: projectMap[projectId]
     }));

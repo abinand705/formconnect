@@ -154,7 +154,7 @@ function CreateProjectModal({ isOpen, onClose, onSuccess, token }) {
   )
 }
 
-function ProjectCard({ project, token, onDeleteSuccess }) {
+function ProjectCard({ project, token, onDeleteSuccess, onNavigate }) {
   const [showApiKey, setShowApiKey] = useState(false)
   const [isExpanded, setIsExpanded] = useState(false)
   const [submissions, setSubmissions] = useState([])
@@ -249,7 +249,19 @@ function ProjectCard({ project, token, onDeleteSuccess }) {
           </div>
 
           <div>
-            <h4 style={{ margin: '0 0 1rem 0' }}>Recent Submissions {loadingSubs ? '...' : `(${submissions.length})`}</h4>
+            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', margin: '0 0 1rem 0' }}>
+              <h4 style={{ margin: 0 }}>Recent Submissions {loadingSubs ? '...' : `(${submissions.length})`}</h4>
+              {onNavigate && (
+                <button
+                  type="button"
+                  className="btn-secondary"
+                  style={{ padding: '0.2rem 0.65rem', fontSize: '0.78rem' }}
+                  onClick={() => onNavigate('submissions')}
+                >
+                  View in Submissions &rarr;
+                </button>
+              )}
+            </div>
             {submissions.length === 0 && !loadingSubs ? (
               <p style={{ fontSize: '0.9rem', color: '#888' }}>No submissions yet.</p>
             ) : (
@@ -323,7 +335,7 @@ function SubmissionItem({ sub }) {
   )
 }
 
-function ProjectList({ token }) {
+function ProjectList({ token, onNavigate }) {
   const [projects, setProjects] = useState([])
   const [loading, setLoading] = useState(true)
   const loadingMessage = useLoadingMessage(loading)
@@ -378,7 +390,8 @@ function ProjectList({ token }) {
             key={project.id} 
             project={project} 
             token={token} 
-            onDeleteSuccess={handleDeleteSuccess} 
+            onDeleteSuccess={handleDeleteSuccess}
+            onNavigate={onNavigate}
           />
         ))
       )}
