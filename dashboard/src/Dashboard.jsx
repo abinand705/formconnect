@@ -10,6 +10,7 @@ import {
   FolderPlus
 } from 'lucide-react'
 import { useLoadingMessage } from './hooks/useLoadingMessage'
+import DashboardLoadingSkeleton from './components/DashboardLoadingSkeleton'
 
 function getRelativeTime(isoDate) {
   if (!isoDate) return 'No activity yet'
@@ -154,7 +155,9 @@ function Dashboard({ token, onNavigate }) {
 
   // Fetch real stats, projects, analytics, and exact submission counts from API
   useEffect(() => {
+    let isMounted = true
     const fetchData = async () => {
+      const startTime = Date.now()
       try {
         const [statsRes, projectsRes, analyticsRes] = await Promise.all([
           fetch(`${import.meta.env.VITE_API_URL}/api/stats`, {
@@ -170,13 +173,13 @@ function Dashboard({ token, onNavigate }) {
 
         if (statsRes && statsRes.ok) {
           const statsData = await statsRes.json()
-          setStats(statsData)
+          if (isMounted) setStats(statsData)
         }
 
         if (projectsRes && projectsRes.ok) {
           const projsData = await projectsRes.json()
           if (Array.isArray(projsData)) {
-            setRealProjects(projsData)
+            if (isMounted) setRealProjects(projsData)
 
             // Extract or fetch exact submission count for each project
             const countsMap = {}
@@ -214,22 +217,32 @@ function Dashboard({ token, onNavigate }) {
               })
             }
 
-            setProjectSubmissionCounts(countsMap)
+            if (isMounted) setProjectSubmissionCounts(countsMap)
           }
         }
 
         if (analyticsRes && analyticsRes.ok) {
           const aData = await analyticsRes.json()
-          setAnalyticsData(aData)
+          if (isMounted) setAnalyticsData(aData)
         }
       } catch (err) {
         console.error(err)
       } finally {
-        setLoading(false)
+        // Enforce smooth transition timing to prevent jarring 10ms flicker on instant cache
+        const elapsed = Date.now() - startTime
+        if (elapsed < 350) {
+          await new Promise((resolve) => setTimeout(resolve, 350 - elapsed))
+        }
+        if (isMounted) {
+          setLoading(false)
+        }
       }
     }
 
     fetchData()
+    return () => {
+      isMounted = false
+    }
   }, [token])
 
   const handleProjectCreated = (newProj) => {
@@ -535,8 +548,12 @@ function Dashboard({ token, onNavigate }) {
   const lastActivityDay = stats?.lastActivity ? getActivityDay(stats.lastActivity) : 'No activity'
   const lastActivityAgo = stats?.lastActivity ? getRelativeTime(stats.lastActivity) : 'No submissions yet'
 
+  if (loading) {
+    return <DashboardLoadingSkeleton loadingMessage={loadingMessage} />
+  }
+
   return (
-    <div style={{ width: '100%' }}>
+    <div className="dashboard-content-fade-in" style={{ width: '100%' }}>
       {/* ==================== SVG PATTERNS DEFINITION ==================== */}
       <svg width="0" height="0" style={{ position: 'absolute' }}>
         <defs>

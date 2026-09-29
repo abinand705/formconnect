@@ -52,7 +52,7 @@ function Login({ setToken, onToggleRegister }) {
   return (
     <div className="auth-page">
       <div className="auth-layout-container">
-        
+
         {/* ==================== LEFT SHOWCASE ==================== */}
         <div className="auth-showcase">
           <div className="brand-logo-container">
@@ -229,7 +229,7 @@ function Login({ setToken, onToggleRegister }) {
                     className="auth-forgot-link"
                     onClick={() => setError('Password reset instructions will be sent to your email.')}
                   >
-                    Forgot password?
+
                   </button>
                 </div>
                 <div className="auth-input-container">
