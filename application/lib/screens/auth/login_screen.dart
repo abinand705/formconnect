@@ -8,6 +8,7 @@ import '../../widgets/custom_toast.dart';
 import '../main_layout_screen.dart';
 import '../settings/server_config_dialog.dart';
 import 'register_screen.dart';
+import '../../widgets/app_logo.dart';
 
 class LoginScreen extends StatefulWidget {
   const LoginScreen({super.key});
@@ -102,25 +103,23 @@ class _LoginScreenState extends State<LoginScreen> {
                         // Brand Icon
                         Center(
                           child: Container(
-                            width: 60,
-                            height: 60,
+                            width: 64,
+                            height: 64,
+                            padding: const EdgeInsets.all(10),
                             decoration: BoxDecoration(
-                              color: AppColors.primaryForest,
+                              color: Colors.white,
                               borderRadius: BorderRadius.circular(16),
+                              border: Border.all(color: AppColors.border),
                               boxShadow: [
                                 BoxShadow(
-                                  color: AppColors.primaryForest.withValues(alpha: 0.25),
+                                  color: AppColors.primaryForest.withValues(alpha: 0.1),
                                   blurRadius: 15,
                                   offset: const Offset(0, 6),
                                 ),
                               ],
                             ),
                             child: const Center(
-                              child: Icon(
-                                Icons.dynamic_form_rounded,
-                                size: 32,
-                                color: AppColors.accentMint,
-                              ),
+                              child: AppLogo(size: 44),
                             ),
                           ),
                         ),

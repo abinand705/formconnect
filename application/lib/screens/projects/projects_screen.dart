@@ -11,6 +11,7 @@ import 'code_snippet_dialog.dart';
 import 'create_project_dialog.dart';
 import 'edit_fields_sheet.dart';
 import 'email_fields_dialog.dart';
+import '../../widgets/app_logo.dart';
 
 class ProjectsScreen extends StatefulWidget {
   const ProjectsScreen({super.key});
@@ -225,12 +226,15 @@ class _ProjectsScreenState extends State<ProjectsScreen> {
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 Container(
-                  padding: const EdgeInsets.all(10),
+                  width: 38,
+                  height: 38,
+                  padding: const EdgeInsets.all(6),
                   decoration: BoxDecoration(
-                    color: AppColors.primaryForest.withValues(alpha: 0.08),
+                    color: Colors.white,
                     borderRadius: BorderRadius.circular(10),
+                    border: Border.all(color: AppColors.border),
                   ),
-                  child: const Icon(Icons.dynamic_form_rounded, color: AppColors.primaryForest, size: 22),
+                  child: const AppLogo(size: 24),
                 ),
                 const SizedBox(width: 12),
                 Expanded(

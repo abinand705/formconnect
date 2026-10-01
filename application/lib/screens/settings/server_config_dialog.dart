@@ -258,11 +258,6 @@ class _ServerConfigDialogState extends State<ServerConfigDialog> {
                     label: const Text('Test Ping', style: TextStyle(fontSize: 12)),
                   ),
                   const Spacer(),
-                  TextButton(
-                    onPressed: () => Navigator.of(context).pop(),
-                    child: const Text('Cancel'),
-                  ),
-                  const SizedBox(width: 8),
                   AppButton(
                     text: 'Save URL',
                     onPressed: _saveUrl,

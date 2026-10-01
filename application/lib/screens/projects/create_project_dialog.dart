@@ -172,7 +172,7 @@ class _CreateProjectDialogState extends State<CreateProjectDialog> {
                     ),
                     const SizedBox(width: 8),
                     AppButton(
-                      text: 'Next: Setup Notifications',
+                      text: 'Continue',
                       isLoading: _isSubmitting,
                       onPressed: _handleStep1Create,
                     ),

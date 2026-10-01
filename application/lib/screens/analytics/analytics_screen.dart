@@ -241,8 +241,12 @@ class _AnalyticsScreenState extends State<AnalyticsScreen> {
                   ),
                   titlesData: FlTitlesData(
                     show: true,
-                    topTitles: const FlTitlesData(show: false).topTitles,
-                    rightTitles: const FlTitlesData(show: false).rightTitles,
+                    topTitles: const AxisTitles(
+                      sideTitles: SideTitles(showTitles: false),
+                    ),
+                    rightTitles: const AxisTitles(
+                      sideTitles: SideTitles(showTitles: false),
+                    ),
                     leftTitles: AxisTitles(
                       sideTitles: SideTitles(
                         showTitles: true,

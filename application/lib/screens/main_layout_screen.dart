@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-import '../providers/auth_provider.dart';
 import '../providers/projects_provider.dart';
 import '../providers/submissions_provider.dart';
 import '../theme/app_theme.dart';
@@ -9,9 +8,9 @@ import 'apikeys/apikeys_screen.dart';
 import 'dashboard/dashboard_screen.dart';
 import 'projects/create_project_dialog.dart';
 import 'projects/projects_screen.dart';
-import 'settings/server_config_dialog.dart';
 import 'settings/settings_screen.dart';
 import 'submissions/submissions_screen.dart';
+import '../widgets/app_logo.dart';
 
 class MainLayoutScreen extends StatefulWidget {
   const MainLayoutScreen({super.key});
@@ -33,7 +32,6 @@ class _MainLayoutScreenState extends State<MainLayoutScreen> {
   Widget build(BuildContext context) {
     final unreadCount = context.watch<SubmissionsProvider>().unreadCount;
     final projectCount = context.watch<ProjectsProvider>().projectCount;
-    final baseUrl = context.watch<AuthProvider>().baseUrl;
 
     final screens = [
       DashboardScreen(onNavigateToTab: _onTabTapped),
@@ -60,15 +58,20 @@ class _MainLayoutScreenState extends State<MainLayoutScreen> {
             Container(
               width: 32,
               height: 32,
+              padding: const EdgeInsets.all(4),
               decoration: BoxDecoration(
-                color: AppColors.primaryForest,
+                color: Colors.white,
                 borderRadius: BorderRadius.circular(8),
+                border: Border.all(color: AppColors.border),
+                boxShadow: const [
+                  BoxShadow(
+                    color: Color(0x0A000000),
+                    blurRadius: 4,
+                    offset: Offset(0, 1),
+                  ),
+                ],
               ),
-              child: const Icon(
-                Icons.dynamic_form_rounded,
-                color: AppColors.accentMint,
-                size: 20,
-              ),
+              child: const AppLogo(size: 24),
             ),
             const SizedBox(width: 10),
             Column(
@@ -96,23 +99,6 @@ class _MainLayoutScreenState extends State<MainLayoutScreen> {
           ],
         ),
         actions: [
-          // Server URL Indicator Pill
-          ActionChip(
-            avatar: const CircleAvatar(
-              radius: 4,
-              backgroundColor: AppColors.accentMint,
-            ),
-            label: Text(
-              baseUrl.replaceAll('http://', '').replaceAll('https://', ''),
-              style: const TextStyle(fontSize: 11, fontWeight: FontWeight.w600),
-            ),
-            padding: const EdgeInsets.symmetric(horizontal: 4),
-            materialTapTargetSize: MaterialTapTargetSize.shrinkWrap,
-            onPressed: () => ServerConfigDialog.show(context),
-            backgroundColor: AppColors.bgSecondary,
-            side: const BorderSide(color: AppColors.border),
-          ),
-          const SizedBox(width: 4),
           // Settings button
           IconButton(
             icon: const Icon(Icons.settings_outlined, size: 22),

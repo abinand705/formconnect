@@ -9,7 +9,8 @@ import {
   LogOut,
   MessageSquare,
   Menu,
-  X
+  X,
+  Download
 } from 'lucide-react'
 import logo from '../assets/logo.svg'
 import { toast } from 'sonner'
@@ -154,18 +155,25 @@ function Sidebar({ activeTab, setActiveTab, email, handleLogout, projectCount })
         <div className="sidebar-promo-title">Download our Mobile App</div>
         <div className="sidebar-promo-sub">Connect with forms anywhere</div>
 
-        <button
-          type="button"
+        <a
+          href="/formconnect.apk"
+          download="FormConnect.apk"
           className="sidebar-promo-btn"
+          style={{
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'center',
+            gap: '0.45rem',
+            textDecoration: 'none',
+            cursor: 'pointer'
+          }}
           onClick={() => {
-            if (navigator?.clipboard?.writeText) {
-              navigator.clipboard.writeText('https://formconnect.app/download').catch(() => { })
-            }
-            toast.success('This feature will be available soon!')
+            toast.success('Downloading FormConnect mobile app...')
           }}
         >
-          Download
-        </button>
+          <Download size={15} />
+          <span>Download</span>
+        </a>
       </div>
     </>
   )

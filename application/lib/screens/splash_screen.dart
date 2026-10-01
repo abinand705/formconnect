@@ -4,6 +4,7 @@ import '../providers/auth_provider.dart';
 import '../theme/app_theme.dart';
 import 'auth/login_screen.dart';
 import 'main_layout_screen.dart';
+import '../widgets/app_logo.dart';
 
 class SplashScreen extends StatefulWidget {
   const SplashScreen({super.key});
@@ -84,29 +85,22 @@ class _SplashScreenState extends State<SplashScreen> with SingleTickerProviderSt
               children: [
                 // Brand Logo Icon
                 Container(
-                  width: 80,
-                  height: 80,
+                  width: 84,
+                  height: 84,
+                  padding: const EdgeInsets.all(14),
                   decoration: BoxDecoration(
-                    color: AppColors.primaryForest,
+                    color: Colors.white,
                     borderRadius: BorderRadius.circular(22),
-                    border: Border.all(
-                      color: AppColors.accentMint.withValues(alpha: 0.3),
-                      width: 1.5,
-                    ),
                     boxShadow: [
                       BoxShadow(
-                        color: AppColors.accentMint.withValues(alpha: 0.2),
+                        color: Colors.black.withValues(alpha: 0.25),
                         blurRadius: 30,
-                        spreadRadius: 2,
+                        offset: const Offset(0, 8),
                       ),
                     ],
                   ),
                   child: const Center(
-                    child: Icon(
-                      Icons.dynamic_form_rounded,
-                      size: 42,
-                      color: AppColors.accentMint,
-                    ),
+                    child: AppLogo(size: 54),
                   ),
                 ),
                 const SizedBox(height: 24),

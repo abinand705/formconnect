@@ -1,4 +1,6 @@
 require("dotenv").config();
+const path = require("path");
+const fs = require("fs");
 const express = require("express");
 const cors = require("cors");
 const authRoutes = require("./routes/auth");
@@ -48,6 +50,23 @@ app.use("/api/submit", submitRoutes);
 app.use("/api/submissions", submissionRoutes);
 app.use("/api/analytics", analyticsRoutes);
 app.use("/api/stats", require("./routes/stats"));
+
+// Mobile Application Download Endpoint
+app.get("/api/download/app", (req, res) => {
+  const candidatePaths = [
+    path.resolve(__dirname, "../dashboard/public/formconnect.apk"),
+    path.resolve(__dirname, "../application/build/app/outputs/flutter-apk/app-release.apk"),
+    path.resolve(__dirname, "../application/build/app/outputs/flutter-apk/app-debug.apk")
+  ];
+
+  for (const filePath of candidatePaths) {
+    if (fs.existsSync(filePath)) {
+      return res.download(filePath, "FormConnect.apk");
+    }
+  }
+
+  res.status(404).json({ error: "Mobile application package not found." });
+});
 
 const PORT = process.env.PORT || 5000;
 app.listen(PORT, "0.0.0.0", () => {
