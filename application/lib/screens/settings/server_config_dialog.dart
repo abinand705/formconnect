@@ -79,9 +79,11 @@ class _ServerConfigDialogState extends State<ServerConfigDialog> {
       shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
       backgroundColor: AppColors.bgCard,
       surfaceTintColor: Colors.transparent,
+      clipBehavior: Clip.antiAlias,
+      insetPadding: const EdgeInsets.symmetric(horizontal: 20, vertical: 24),
       child: ConstrainedBox(
         constraints: const BoxConstraints(maxWidth: 480),
-        child: Padding(
+        child: SingleChildScrollView(
           padding: const EdgeInsets.all(22),
           child: Column(
             mainAxisSize: MainAxisSize.min,
@@ -246,22 +248,32 @@ class _ServerConfigDialogState extends State<ServerConfigDialog> {
               // Actions
               Row(
                 children: [
-                  OutlinedButton.icon(
-                    onPressed: _isTesting ? null : _testConnection,
-                    icon: _isTesting
-                        ? const SizedBox(
-                            width: 14,
-                            height: 14,
-                            child: CircularProgressIndicator(strokeWidth: 2),
-                          )
-                        : const Icon(Icons.network_check_rounded, size: 16),
-                    label: const Text('Test Ping', style: TextStyle(fontSize: 12)),
+                  Expanded(
+                    child: OutlinedButton.icon(
+                      style: OutlinedButton.styleFrom(
+                        padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 10),
+                      ),
+                      onPressed: _isTesting ? null : _testConnection,
+                      icon: _isTesting
+                          ? const SizedBox(
+                              width: 14,
+                              height: 14,
+                              child: CircularProgressIndicator(strokeWidth: 2),
+                            )
+                          : const Icon(Icons.network_check_rounded, size: 16),
+                      label: const FittedBox(
+                        fit: BoxFit.scaleDown,
+                        child: Text('Test Ping', style: TextStyle(fontSize: 12)),
+                      ),
+                    ),
                   ),
-                  const Spacer(),
-                  AppButton(
-                    text: 'Save URL',
-                    onPressed: _saveUrl,
-                    height: 40,
+                  const SizedBox(width: 12),
+                  Expanded(
+                    child: AppButton(
+                      text: 'Save URL',
+                      onPressed: _saveUrl,
+                      height: 40,
+                    ),
                   ),
                 ],
               ),

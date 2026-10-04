@@ -79,12 +79,20 @@ class _TestSubmitDialogState extends State<TestSubmitDialog> {
 
   @override
   Widget build(BuildContext context) {
+    final mediaQuery = MediaQuery.of(context);
+    final availableHeight = mediaQuery.size.height - mediaQuery.viewInsets.bottom;
+
     return Dialog(
       shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
       backgroundColor: AppColors.bgCard,
       surfaceTintColor: Colors.transparent,
+      clipBehavior: Clip.antiAlias,
+      insetPadding: const EdgeInsets.symmetric(horizontal: 20, vertical: 24),
       child: ConstrainedBox(
-        constraints: const BoxConstraints(maxWidth: 480, maxHeight: 580),
+        constraints: BoxConstraints(
+          maxWidth: 480,
+          maxHeight: (availableHeight * 0.85).clamp(280.0, 580.0),
+        ),
         child: Padding(
           padding: const EdgeInsets.all(22),
           child: Column(

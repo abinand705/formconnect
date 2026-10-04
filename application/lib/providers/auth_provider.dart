@@ -11,6 +11,10 @@ class AuthProvider extends ChangeNotifier {
   bool _isLoading = false;
   String? _errorMessage;
   String _baseUrl = StorageService.getBaseUrl();
+  bool _isServerHealthy = false;
+  bool _isCheckingServer = false;
+  int? _serverLatencyMs;
+  String? _serverStatusMessage;
 
   AuthStatus get status => _status;
   UserModel? get user => _user;
@@ -18,6 +22,10 @@ class AuthProvider extends ChangeNotifier {
   bool get isLoading => _isLoading;
   String? get errorMessage => _errorMessage;
   String get baseUrl => _baseUrl;
+  bool get isServerHealthy => _isServerHealthy;
+  bool get isCheckingServer => _isCheckingServer;
+  int? get serverLatencyMs => _serverLatencyMs;
+  String? get serverStatusMessage => _serverStatusMessage;
 
   AuthProvider() {
     _initFromStorage();
@@ -41,7 +49,23 @@ class AuthProvider extends ChangeNotifier {
   Future<void> updateBaseUrl(String newUrl) async {
     await StorageService.setBaseUrl(newUrl);
     _baseUrl = StorageService.getBaseUrl();
+    _isServerHealthy = false;
     notifyListeners();
+    await checkServerHealth();
+  }
+
+  Future<ServerHealthResult> checkServerHealth([String? targetUrl]) async {
+    _isCheckingServer = true;
+    notifyListeners();
+
+    final result = await ApiService.checkServerHealth(targetUrl ?? _baseUrl);
+    _isServerHealthy = result.isHealthy;
+    _serverLatencyMs = result.latencyMs;
+    _serverStatusMessage = result.message;
+    _isCheckingServer = false;
+    notifyListeners();
+
+    return result;
   }
 
   Future<bool> login(String email, String password) async {

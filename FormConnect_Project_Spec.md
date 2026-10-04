@@ -134,7 +134,7 @@ Backend validates:
 
 ```js
 async function handleContactSubmit(formData) {
-  const res = await fetch('https://formconnect-api.onrender.com/api/submit', {
+  const res = await fetch('https://formconnect.onrender.com/api/submit', {
     method: 'POST',
     headers: { 'Content-Type': 'application/json' },
     body: JSON.stringify({

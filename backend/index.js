@@ -43,6 +43,16 @@ const corsOptionsDelegate = (req, callback) => {
 app.use(cors(corsOptionsDelegate));
 app.use(express.json());
 
+// Fast server health check endpoint (public, unauthenticated)
+app.get("/api/health", (req, res) => {
+  res.json({
+    status: "ok",
+    service: "FormConnect API",
+    uptime: process.uptime(),
+    timestamp: new Date().toISOString()
+  });
+});
+
 // Routes
 app.use("/api/auth", authRoutes);
 app.use("/api/projects", projectRoutes);

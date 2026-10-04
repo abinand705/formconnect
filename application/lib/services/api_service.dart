@@ -16,6 +16,22 @@ class ApiException implements Exception {
   String toString() => message;
 }
 
+class ServerHealthResult {
+  final bool isHealthy;
+  final int statusCode;
+  final int latencyMs;
+  final String url;
+  final String? message;
+
+  const ServerHealthResult({
+    required this.isHealthy,
+    required this.statusCode,
+    required this.latencyMs,
+    required this.url,
+    this.message,
+  });
+}
+
 class ApiService {
   static String get baseUrl => StorageService.getBaseUrl();
 
@@ -29,18 +45,65 @@ class ApiService {
     };
   }
 
-  // Connectivity Test
-  static Future<bool> pingServer([String? testUrl]) async {
-    final target = testUrl ?? baseUrl;
+  // Connectivity Test with detailed diagnostics & latency
+  static Future<ServerHealthResult> checkServerHealth([
+    String? testUrl,
+    Duration timeout = const Duration(seconds: 4),
+  ]) async {
+    final target = (testUrl != null && testUrl.trim().isNotEmpty) ? testUrl.trim() : baseUrl;
+    final stopwatch = Stopwatch()..start();
+
+    // 1. Try public /api/health endpoint first
+    try {
+      final res = await http
+          .get(Uri.parse('$target/api/health'))
+          .timeout(timeout);
+      stopwatch.stop();
+
+      if (res.statusCode >= 200 && res.statusCode < 300) {
+        return ServerHealthResult(
+          isHealthy: true,
+          statusCode: res.statusCode,
+          latencyMs: stopwatch.elapsedMilliseconds,
+          url: target,
+          message: 'Server online and healthy',
+        );
+      }
+    } catch (_) {
+      // Continue to fallback check
+    }
+
+    // 2. Fallback to /api/stats (returns 401 if unauthenticated, proving server is reachable and active)
     try {
       final res = await http
           .get(Uri.parse('$target/api/stats'))
-          .timeout(const Duration(seconds: 4));
-      // Even if 401 Unauthorized, it means the server is reachable and active!
-      return res.statusCode < 500;
-    } catch (_) {
-      return false;
+          .timeout(timeout);
+      stopwatch.stop();
+
+      final isAwake = res.statusCode < 500;
+      return ServerHealthResult(
+        isHealthy: isAwake,
+        statusCode: res.statusCode,
+        latencyMs: stopwatch.elapsedMilliseconds,
+        url: target,
+        message: isAwake ? 'Server active (HTTP ${res.statusCode})' : 'Server returned error ${res.statusCode}',
+      );
+    } catch (e) {
+      stopwatch.stop();
+      return ServerHealthResult(
+        isHealthy: false,
+        statusCode: 0,
+        latencyMs: stopwatch.elapsedMilliseconds,
+        url: target,
+        message: 'Could not connect: $e',
+      );
     }
+  }
+
+  // Connectivity Test
+  static Future<bool> pingServer([String? testUrl]) async {
+    final result = await checkServerHealth(testUrl);
+    return result.isHealthy;
   }
 
   // -------------------------------------------------------------

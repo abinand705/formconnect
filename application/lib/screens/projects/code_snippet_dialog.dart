@@ -47,12 +47,19 @@ class _CodeSnippetDialogState extends State<CodeSnippetDialog> with SingleTicker
     final reactCode = CodeGenerator.generateReact(widget.project, baseUrl);
     final curlCode = CodeGenerator.generateCurl(widget.project, baseUrl);
 
+    final screenHeight = MediaQuery.of(context).size.height;
+
     return Dialog(
       shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
       backgroundColor: AppColors.bgCard,
       surfaceTintColor: Colors.transparent,
+      clipBehavior: Clip.antiAlias,
+      insetPadding: const EdgeInsets.symmetric(horizontal: 20, vertical: 24),
       child: ConstrainedBox(
-        constraints: const BoxConstraints(maxWidth: 620, maxHeight: 600),
+        constraints: BoxConstraints(
+          maxWidth: 620,
+          maxHeight: (screenHeight * 0.85).clamp(350.0, 600.0),
+        ),
         child: Padding(
           padding: const EdgeInsets.all(22),
           child: Column(

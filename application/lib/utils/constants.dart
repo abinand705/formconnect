@@ -36,7 +36,7 @@ class AppConstants {
     },
     {
       'label': 'Cloud Render API',
-      'url': 'https://formconnect-api.onrender.com',
+      'url': 'https://formconnect.onrender.com',
       'desc': 'Live production backend deployment',
     },
   ];

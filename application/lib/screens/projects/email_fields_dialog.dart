@@ -77,9 +77,11 @@ class _EmailFieldsDialogState extends State<EmailFieldsDialog> {
       shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
       backgroundColor: AppColors.bgCard,
       surfaceTintColor: Colors.transparent,
+      clipBehavior: Clip.antiAlias,
+      insetPadding: const EdgeInsets.symmetric(horizontal: 20, vertical: 24),
       child: ConstrainedBox(
         constraints: const BoxConstraints(maxWidth: 460),
-        child: Padding(
+        child: SingleChildScrollView(
           padding: const EdgeInsets.all(22),
           child: Column(
             mainAxisSize: MainAxisSize.min,

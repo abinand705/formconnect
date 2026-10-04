@@ -67,7 +67,7 @@ class AppButton extends StatelessWidget {
             borderRadius: BorderRadius.circular(10),
             side: borderSide,
           ),
-          padding: const EdgeInsets.symmetric(horizontal: 16),
+          padding: const EdgeInsets.symmetric(horizontal: 12),
         ),
         child: isLoading
             ? SizedBox(
@@ -78,23 +78,26 @@ class AppButton extends StatelessWidget {
                   valueColor: AlwaysStoppedAnimation<Color>(fgColor),
                 ),
               )
-            : Row(
-                mainAxisSize: MainAxisSize.min,
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: [
-                  if (icon != null) ...[
-                    Icon(icon, size: 18, color: fgColor),
-                    const SizedBox(width: 8),
-                  ],
-                  Text(
-                    text,
-                    style: TextStyle(
-                      fontSize: 14,
-                      fontWeight: FontWeight.w600,
-                      color: fgColor,
+            : FittedBox(
+                fit: BoxFit.scaleDown,
+                child: Row(
+                  mainAxisSize: MainAxisSize.min,
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    if (icon != null) ...[
+                      Icon(icon, size: 18, color: fgColor),
+                      const SizedBox(width: 8),
+                    ],
+                    Text(
+                      text,
+                      style: TextStyle(
+                        fontSize: 14,
+                        fontWeight: FontWeight.w600,
+                        color: fgColor,
+                      ),
                     ),
-                  ),
-                ],
+                  ],
+                ),
               ),
       ),
     );

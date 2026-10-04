@@ -6,6 +6,7 @@ import '../../widgets/app_button.dart';
 import '../../widgets/app_text_field.dart';
 import '../../widgets/custom_toast.dart';
 import '../auth/login_screen.dart';
+import '../server_loading_screen.dart';
 import 'server_config_dialog.dart';
 
 class SettingsScreen extends StatefulWidget {
@@ -29,32 +30,34 @@ class _SettingsScreenState extends State<SettingsScreen> {
         builder: (ctx, setDialogState) => AlertDialog(
           shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
           title: const Text('Change Password', style: TextStyle(fontSize: 18, fontWeight: FontWeight.w700)),
-          content: Form(
-            key: formKey,
-            child: Column(
-              mainAxisSize: MainAxisSize.min,
-              children: [
-                AppTextField(
-                  controller: currentPassCtrl,
-                  label: 'Current Password',
-                  obscureText: true,
-                  validator: (val) => val == null || val.isEmpty ? 'Required' : null,
-                ),
-                const SizedBox(height: 12),
-                AppTextField(
-                  controller: newPassCtrl,
-                  label: 'New Password',
-                  obscureText: true,
-                  validator: (val) => val != null && val.length >= 6 ? null : 'Min 6 characters',
-                ),
-                const SizedBox(height: 12),
-                AppTextField(
-                  controller: confirmPassCtrl,
-                  label: 'Confirm New Password',
-                  obscureText: true,
-                  validator: (val) => val == newPassCtrl.text ? null : 'Passwords do not match',
-                ),
-              ],
+          content: SingleChildScrollView(
+            child: Form(
+              key: formKey,
+              child: Column(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  AppTextField(
+                    controller: currentPassCtrl,
+                    label: 'Current Password',
+                    obscureText: true,
+                    validator: (val) => val == null || val.isEmpty ? 'Required' : null,
+                  ),
+                  const SizedBox(height: 12),
+                  AppTextField(
+                    controller: newPassCtrl,
+                    label: 'New Password',
+                    obscureText: true,
+                    validator: (val) => val != null && val.length >= 6 ? null : 'Min 6 characters',
+                  ),
+                  const SizedBox(height: 12),
+                  AppTextField(
+                    controller: confirmPassCtrl,
+                    label: 'Confirm New Password',
+                    obscureText: true,
+                    validator: (val) => val == newPassCtrl.text ? null : 'Passwords do not match',
+                  ),
+                ],
+              ),
             ),
           ),
           actions: [
@@ -104,21 +107,23 @@ class _SettingsScreenState extends State<SettingsScreen> {
         builder: (ctx, setDialogState) => AlertDialog(
           shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
           title: const Text('Delete Account', style: TextStyle(color: AppColors.danger, fontWeight: FontWeight.w700)),
-          content: Column(
-            mainAxisSize: MainAxisSize.min,
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              const Text(
-                'This will permanently delete your account, projects, and all submissions. Enter your password to confirm.',
-                style: TextStyle(fontSize: 13, color: AppColors.textSecondary),
-              ),
-              const SizedBox(height: 14),
-              AppTextField(
-                controller: passCtrl,
-                label: 'Password',
-                obscureText: true,
-              ),
-            ],
+          content: SingleChildScrollView(
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                const Text(
+                  'This will permanently delete your account, projects, and all submissions. Enter your password to confirm.',
+                  style: TextStyle(fontSize: 13, color: AppColors.textSecondary),
+                ),
+                const SizedBox(height: 14),
+                AppTextField(
+                  controller: passCtrl,
+                  label: 'Password',
+                  obscureText: true,
+                ),
+              ],
+            ),
           ),
           actions: [
             TextButton(
@@ -252,16 +257,36 @@ class _SettingsScreenState extends State<SettingsScreen> {
               borderRadius: BorderRadius.circular(14),
               border: Border.all(color: AppColors.border),
             ),
-            child: ListTile(
-              contentPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 6),
-              leading: const Icon(Icons.dns_rounded, color: AppColors.primaryForest),
-              title: const Text('API Endpoint', style: TextStyle(fontSize: 14, fontWeight: FontWeight.w600)),
-              subtitle: Text(
-                auth.baseUrl,
-                style: const TextStyle(fontSize: 12, color: AppColors.textSecondary),
-              ),
-              trailing: const Icon(Icons.chevron_right, size: 20),
-              onTap: () => ServerConfigDialog.show(context),
+            child: Column(
+              children: [
+                ListTile(
+                  contentPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 6),
+                  leading: const Icon(Icons.dns_rounded, color: AppColors.primaryForest),
+                  title: const Text('API Endpoint', style: TextStyle(fontSize: 14, fontWeight: FontWeight.w600)),
+                  subtitle: Text(
+                    auth.baseUrl,
+                    style: const TextStyle(fontSize: 12, color: AppColors.textSecondary),
+                  ),
+                  trailing: const Icon(Icons.chevron_right, size: 20),
+                  onTap: () => ServerConfigDialog.show(context),
+                ),
+                const Divider(height: 1),
+                ListTile(
+                  contentPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 6),
+                  leading: Container(
+                    padding: const EdgeInsets.all(6),
+                    decoration: BoxDecoration(
+                      color: AppColors.accentMint.withValues(alpha: 0.1),
+                      borderRadius: BorderRadius.circular(8),
+                    ),
+                    child: const Icon(Icons.bolt_rounded, color: AppColors.accentMint, size: 20),
+                  ),
+                  title: const Text('Server Loading & Wake-Up Screen', style: TextStyle(fontSize: 14, fontWeight: FontWeight.w600)),
+                  subtitle: const Text('Monitor server readiness, pulse test, and wake up cloud instances', style: TextStyle(fontSize: 12, color: AppColors.textSecondary)),
+                  trailing: const Icon(Icons.chevron_right, size: 20),
+                  onTap: () => ServerLoadingScreen.showAsDialog(context),
+                ),
+              ],
             ),
           ),
           const SizedBox(height: 20),
